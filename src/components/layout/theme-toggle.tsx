@@ -2,15 +2,17 @@
 
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 
 import { Button } from "@/components/ui/button";
 
+const noopSubscribe = () => () => {};
+
 export function ThemeToggle() {
   const { theme, resolvedTheme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => setMounted(true), []);
+  // true só no navegador. No servidor e na hidratação é false, então o ícone só
+  // aparece quando o tema real já é conhecido, sem erro de hidratação.
+  const mounted = useSyncExternalStore(noopSubscribe, () => true, () => false);
 
   const current = (theme === "system" ? resolvedTheme : theme) ?? "light";
   const isDark = current === "dark";

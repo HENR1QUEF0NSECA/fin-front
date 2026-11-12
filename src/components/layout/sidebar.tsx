@@ -19,10 +19,14 @@ export function Sidebar({ userName }: SidebarProps) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
-  // Fecha o drawer ao trocar de rota
-  useEffect(() => {
+  // Fecha o drawer ao trocar de rota (inclusive voltar/avançar do navegador).
+  // Ajusta o estado durante o render, como a doc do React recomenda para
+  // "estado que depende de uma prop", em vez de um efeito que renderiza duas vezes.
+  const [lastPathname, setLastPathname] = useState(pathname);
+  if (pathname !== lastPathname) {
+    setLastPathname(pathname);
     setOpen(false);
-  }, [pathname]);
+  }
 
   // ESC fecha o drawer mobile
   useEffect(() => {
