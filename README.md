@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FinPlan — Meu Norte (front-end)
 
-## Getting Started
+Front-end do planejador financeiro pessoal. Next.js 16 (App Router), React 19 e
+TypeScript, com Tailwind CSS 4, React Query, react-hook-form + zod e recharts.
 
-First, run the development server:
+## Como rodar
+
+Pré-requisito: o back-end ([fin-back](https://github.com/HENR1QUEF0NSECA/fin-back))
+rodando em `http://localhost:8080`.
 
 ```bash
+npm ci
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abra http://localhost:3000.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Variáveis de ambiente opcionais (em `.env.local`):
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Variável | Padrão | Para quê |
+|---|---|---|
+| `BACKEND_URL` | `http://localhost:8080/api` | Endereço da API Spring |
+| `SESSION_COOKIE_NAME` | `finplan_session` | Nome do cookie de sessão |
 
-## Learn More
+Scripts: `npm run dev`, `npm run build`, `npm run start` e `npm run lint`.
 
-To learn more about Next.js, take a look at the following resources:
+## Como funciona
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+O navegador nunca chama o Spring direto. Rotas do próprio Next (`src/app/api`)
+fazem o meio de campo:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `/api/auth/login` e `/api/auth/register` chamam o back. O login guarda o JWT
+  num cookie `httpOnly`.
+- `/api/auth/logout` apaga o cookie. `/api/auth/expired` apaga o cookie e manda
+  para o login quando a sessão não vale mais.
+- `/api/backend/<caminho>` repassa qualquer chamada para `BACKEND_URL`, com
+  `Authorization: Bearer <token do cookie>`.
 
-## Deploy on Vercel
+`src/proxy.ts` (o antigo `middleware.ts`) manda para `/login` quem abre uma página
+interna sem cookie, e para `/painel` quem abre o login ou o registro já logado.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Telas: `/painel`, `/transacoes`, `/relatorios` e `/orcamentos` (em `src/app/(app)`),
+além de `/login` e `/registro` (em `src/app/(auth)`).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Estrutura
+
+```
+src/
+  app/         rotas: páginas e route handlers
+  components/  componentes genéricos (ui/) e de layout (layout/)
+  features/    uma pasta por funcionalidade: services (API), hooks (React Query),
+               schemas (zod) e components
+  lib/         utilitários: fetch, sessão, formatação
+  providers/   tema, React Query e modo privado
+```
