@@ -1,8 +1,15 @@
 import { cn } from "@/lib/utils";
 
+const toneClass = {
+  primary: "bg-primary",
+  success: "bg-success",
+  warning: "bg-warning",
+  danger: "bg-danger",
+} as const;
+
 type ProgressProps = {
-  value: number; // 0..100
-  tone?: "primary" | "success";
+  value: number; // 0..100 (valores acima de 100 enchem a barra)
+  tone?: keyof typeof toneClass;
   className?: string;
   label?: string;
 };
@@ -19,10 +26,7 @@ export function Progress({ value, tone = "primary", className, label }: Progress
       className={cn("h-2 w-full overflow-hidden rounded-full bg-muted", className)}
     >
       <div
-        className={cn(
-          "h-full rounded-full transition-all duration-300 ease-out",
-          tone === "success" ? "bg-success" : "bg-primary",
-        )}
+        className={cn("h-full rounded-full transition-all duration-300 ease-out", toneClass[tone])}
         style={{ width: `${clamped}%` }}
       />
     </div>

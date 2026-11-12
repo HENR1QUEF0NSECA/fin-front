@@ -45,11 +45,12 @@ export function BudgetCard({
   const remove = useDeleteBudget();
 
   const limit = Math.max(budget.limite, 0.0001);
-  const pct = Math.min(200, (spent / limit) * 100);
+  // Percentual real (pode passar de 100%); a barra limita o preenchimento sozinha.
+  const pct = (spent / limit) * 100;
   const isOver = spent > budget.limite;
   const isNear = !isOver && pct >= 80;
 
-  const tone: "primary" | "success" = isOver ? "primary" : "success";
+  const tone = isOver ? "danger" : isNear ? "warning" : "success";
   const statusBadge = isOver ? (
     <Badge tone="danger">Estourado</Badge>
   ) : isNear ? (
@@ -110,7 +111,7 @@ export function BudgetCard({
             </span>
           </div>
           <Progress
-            value={Math.min(100, pct)}
+            value={pct}
             tone={tone}
             label={`Uso: ${Math.round(pct)} por cento`}
           />
