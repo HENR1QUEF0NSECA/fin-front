@@ -6,26 +6,11 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { formatCurrency } from "@/lib/format";
+import { formatCurrency, MONTH_SHORT_LABELS } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { usePrivacy } from "@/providers/privacy-provider";
 
 import type { Budget } from "../types";
-
-const MONTH_LABELS = [
-  "Jan",
-  "Fev",
-  "Mar",
-  "Abr",
-  "Mai",
-  "Jun",
-  "Jul",
-  "Ago",
-  "Set",
-  "Out",
-  "Nov",
-  "Dez",
-];
 
 type BudgetCardProps = {
   budget: Budget;
@@ -63,7 +48,7 @@ export function BudgetCard({
       ? "bg-warning/15 text-warning"
       : "bg-success/15 text-success";
 
-  const monthLabel = MONTH_LABELS[Math.min(11, Math.max(0, budget.mes - 1))];
+  const monthLabel = MONTH_SHORT_LABELS[Math.min(11, Math.max(0, budget.mes - 1))];
 
   return (
     <Card className={cn(isOver && "ring-2 ring-danger/60 ring-offset-2 ring-offset-background")}>

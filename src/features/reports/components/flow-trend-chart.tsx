@@ -11,16 +11,9 @@ import {
   YAxis,
 } from "recharts";
 
+import type { FlowPoint } from "@/features/dashboard/chart-data";
 import { ChartShell } from "@/features/dashboard/components/chart-shell";
 import { formatCurrency } from "@/lib/format";
-
-type FlowPoint = {
-  monthKey: string;
-  label: string;
-  receita: number;
-  despesa: number;
-  economia: number;
-};
 
 type FlowTrendChartProps = {
   data: FlowPoint[];

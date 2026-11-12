@@ -1,19 +1,6 @@
-import type { DashboardEvolucao, ResumoCategoria } from "./types";
+import { MONTH_SHORT_LABELS } from "@/lib/format";
 
-const MONTH_LABELS = [
-  "Jan",
-  "Fev",
-  "Mar",
-  "Abr",
-  "Mai",
-  "Jun",
-  "Jul",
-  "Ago",
-  "Set",
-  "Out",
-  "Nov",
-  "Dez",
-];
+import type { DashboardEvolucao, ResumoCategoria } from "./types";
 
 export type MonthlyPoint = {
   monthKey: string;
@@ -36,7 +23,7 @@ export function toMonthlySeries(evolucao: DashboardEvolucao): MonthlyPoint[] {
   for (const m of evolucao.meses) {
     byMonth.set(m.mes, { receita: m.receitas, despesa: m.despesas });
   }
-  return MONTH_LABELS.map((label, idx) => {
+  return MONTH_SHORT_LABELS.map((label, idx) => {
     const mes = idx + 1;
     const entry = byMonth.get(mes) ?? { receita: 0, despesa: 0 };
     return {

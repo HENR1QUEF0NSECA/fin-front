@@ -11,15 +11,9 @@ import {
   YAxis,
 } from "recharts";
 
+import type { MonthlyPoint } from "@/features/dashboard/chart-data";
 import { ChartShell } from "@/features/dashboard/components/chart-shell";
 import { formatCurrency } from "@/lib/format";
-
-type MonthlyPoint = {
-  monthKey: string;
-  label: string;
-  receita: number;
-  despesa: number;
-};
 
 type MonthlyComparisonChartProps = {
   data: MonthlyPoint[];

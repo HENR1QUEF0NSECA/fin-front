@@ -16,6 +16,22 @@ const longDateFormatter = new Intl.DateTimeFormat("pt-BR", {
   year: "numeric",
 });
 
+/** Abreviações dos meses, na ordem (índice 0 = janeiro). */
+export const MONTH_SHORT_LABELS = [
+  "Jan",
+  "Fev",
+  "Mar",
+  "Abr",
+  "Mai",
+  "Jun",
+  "Jul",
+  "Ago",
+  "Set",
+  "Out",
+  "Nov",
+  "Dez",
+] as const;
+
 export const PRIVACY_PLACEHOLDER = "R$ ••••••";
 
 export function formatCurrency(value: number, isPrivate = false): string {
