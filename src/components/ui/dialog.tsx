@@ -1,7 +1,7 @@
 "use client";
 
 import { X } from "lucide-react";
-import { useCallback, useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useEffectEvent, useRef, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 
 import { cn } from "@/lib/utils";
@@ -26,6 +26,9 @@ const sizeMap = {
 const FOCUSABLE_SELECTOR =
   'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
+const FIELD_SELECTOR =
+  'input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled])';
+
 function getFocusables(root: HTMLElement | null): HTMLElement[] {
   if (!root) return [];
   return Array.from(root.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)).filter(
@@ -44,49 +47,57 @@ export function Dialog({
   className,
 }: DialogProps) {
   const contentRef = useRef<HTMLDivElement>(null);
+  const bodyRef = useRef<HTMLDivElement>(null);
 
-  const handleKey = useCallback(
-    (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        event.stopPropagation();
-        onClose();
-        return;
-      }
-      if (event.key !== "Tab") return;
-      const focusables = getFocusables(contentRef.current);
-      if (focusables.length === 0) return;
-      const first = focusables[0];
-      const last = focusables[focusables.length - 1];
-      const active = document.activeElement as HTMLElement | null;
-      if (event.shiftKey && (active === first || !contentRef.current?.contains(active))) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && active === last) {
-        event.preventDefault();
-        first.focus();
-      }
-    },
-    [onClose],
-  );
+  // Effect Event: sempre usa o onClose mais recente sem ser dependência do efeito.
+  // Antes era um useCallback([onClose]); como os pais passam uma arrow nova a cada
+  // render, qualquer re-render do pai recriava o efeito abaixo, e o foco voltava ao
+  // botão que abriu o modal e depois ia para o primeiro elemento, tirando o usuário
+  // do campo em que estava digitando.
+  const handleKey = useEffectEvent((event: KeyboardEvent) => {
+    if (event.key === "Escape") {
+      event.stopPropagation();
+      onClose();
+      return;
+    }
+    if (event.key !== "Tab") return;
+    const focusables = getFocusables(contentRef.current);
+    if (focusables.length === 0) return;
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+    const active = document.activeElement as HTMLElement | null;
+    if (event.shiftKey && (active === first || !contentRef.current?.contains(active))) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && active === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  });
 
   useEffect(() => {
     if (!open) return;
     const previouslyFocused = document.activeElement as HTMLElement | null;
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    document.addEventListener("keydown", handleKey);
+    const onKeyDown = (event: KeyboardEvent) => handleKey(event);
+    document.addEventListener("keydown", onKeyDown);
 
-    // Foca o primeiro elemento focável
-    const first = getFocusables(contentRef.current)[0];
-    first?.focus();
+    // Foco inicial: primeiro campo do formulário; sem campos (ex.: confirmação de
+    // exclusão), o primeiro botão do conteúdo; só então o botão Fechar do cabeçalho.
+    const target =
+      bodyRef.current?.querySelector<HTMLElement>(FIELD_SELECTOR) ??
+      getFocusables(bodyRef.current)[0] ??
+      getFocusables(contentRef.current)[0];
+    target?.focus();
 
     return () => {
-      document.removeEventListener("keydown", handleKey);
+      document.removeEventListener("keydown", onKeyDown);
       document.body.style.overflow = prevOverflow;
       // Devolve o foco ao elemento que abriu o modal
       previouslyFocused?.focus?.();
     };
-  }, [open, handleKey]);
+  }, [open]);
 
   if (!open) return null;
   if (typeof window === "undefined") return null;
@@ -132,7 +143,9 @@ export function Dialog({
             <X className="h-4 w-4" aria-hidden />
           </button>
         </div>
-        <div className="px-6 py-5">{children}</div>
+        <div ref={bodyRef} className="px-6 py-5">
+          {children}
+        </div>
         {footer ? (
           <div className="flex flex-wrap items-center justify-end gap-2 border-t border-border bg-muted/30 px-6 py-3">
             {footer}
