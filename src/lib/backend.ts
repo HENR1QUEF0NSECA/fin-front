@@ -1,6 +1,7 @@
 import "server-only";
 
 import { env } from "./env";
+import { extractErrorMessage } from "./error-message";
 
 export class BackendError extends Error {
   constructor(
@@ -43,16 +44,6 @@ async function parseResponse(res: Response): Promise<unknown> {
   return text.length > 0 ? text : null;
 }
 
-function extractMessage(data: unknown, fallback: string): string {
-  if (typeof data === "string" && data.length > 0) return data;
-  if (data && typeof data === "object") {
-    const obj = data as Record<string, unknown>;
-    if (typeof obj.message === "string") return obj.message;
-    if (typeof obj.error === "string") return obj.error;
-  }
-  return fallback;
-}
-
 /**
  * Fetch server-only do backend. NÃO importar em código de cliente.
  * Recebe o token explicitamente (route handler que ler o cookie repassa).
@@ -80,7 +71,7 @@ export async function backendFetch<T>(
   const data = await parseResponse(res);
 
   if (!res.ok) {
-    throw new BackendError(res.status, extractMessage(data, res.statusText), data);
+    throw new BackendError(res.status, extractErrorMessage(data) ?? res.statusText, data);
   }
 
   return data as T;

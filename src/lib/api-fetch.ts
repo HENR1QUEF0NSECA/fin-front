@@ -1,4 +1,5 @@
 import { BFF_ROUTES } from "./api-routes";
+import { extractErrorMessage } from "./error-message";
 
 export class ApiError extends Error {
   constructor(
@@ -17,16 +18,6 @@ type ApiFetchOptions = {
   searchParams?: Record<string, string | undefined | null>;
   signal?: AbortSignal;
 };
-
-function extractMessage(data: unknown, fallback: string): string {
-  if (typeof data === "string" && data.length > 0) return data;
-  if (data && typeof data === "object") {
-    const obj = data as Record<string, unknown>;
-    if (typeof obj.error === "string") return obj.error;
-    if (typeof obj.message === "string") return obj.message;
-  }
-  return fallback;
-}
 
 function buildPath(path: string, searchParams?: ApiFetchOptions["searchParams"]): string {
   const base = BFF_ROUTES.backend(path);
@@ -66,7 +57,11 @@ export async function apiFetch<T>(
   const data = hasJson ? await res.json().catch(() => null) : null;
 
   if (!res.ok) {
-    throw new ApiError(res.status, extractMessage(data, res.statusText), data);
+    // O Spring não envia o texto do status (statusText vem vazio), então o
+    // fallback final é uma mensagem genérica, para nunca exibir erro em branco.
+    const message =
+      extractErrorMessage(data) ?? (res.statusText || "Não foi possível concluir a operação.");
+    throw new ApiError(res.status, message, data);
   }
 
   return (data ?? undefined) as T;
