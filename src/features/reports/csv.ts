@@ -1,3 +1,5 @@
+import { formatDate } from "@/lib/format";
+
 /**
  * Linha pronta pra CSV — desacoplada do DTO de Transaction
  * (a view enriquece com o nome da categoria via lookup).
@@ -10,14 +12,20 @@ export type TransactionCsvRow = {
   valor: number;
 };
 
+/**
+ * Coloca o valor entre aspas. Um texto que começa com = + - @ (ou tab/CR) vira
+ * fórmula ao abrir o CSV no Excel/LibreOffice; o apóstrofo na frente faz a
+ * planilha tratá-lo como texto (recomendação da OWASP contra CSV injection).
+ */
 function escape(value: string): string {
-  return `"${value.replace(/"/g, '""')}"`;
+  const safe = /^[=+\-@\t\r]/.test(value) ? `'${value}` : value;
+  return `"${safe.replace(/"/g, '""')}"`;
 }
 
 export function transactionsToCsv(rows: TransactionCsvRow[]): string {
   const header = ["Data", "Tipo", "Categoria", "Descrição", "Valor"];
   const data = rows.map((r) => [
-    r.data ?? "",
+    r.data ? formatDate(r.data) : "",
     r.tipo === "RECEITA" ? "Receita" : "Despesa",
     r.categoria,
     r.descricao,
