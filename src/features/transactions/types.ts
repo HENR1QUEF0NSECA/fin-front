@@ -9,7 +9,7 @@ export type BackendTransactionType = "D" | "R";
 
 /**
  * Transação no formato da UI. Vem do TransacaoResponseDTO do backend
- * (idTransacao, dataHoraTransacao, ...), convertido em services.ts.
+ * (id, categoriaId, dataHoraTransacao, ...), convertido em services.ts.
  */
 export type Transaction = {
   id: number;

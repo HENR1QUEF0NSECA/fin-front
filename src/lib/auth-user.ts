@@ -8,14 +8,15 @@ export type SessionUser = {
   nome: string;
 };
 
-/** GET /users/me devolve os dados do token: { userId, nome, mensagem }. */
+/** GET /usuarios/me devolve o UsuarioResponseDTO: { id, nome, email, dataInclusao }. */
 type MeResponse = {
-  userId?: number;
+  id?: number;
   nome?: string;
+  email?: string;
 };
 
 /**
- * Busca o usuário autenticado via GET /users/me usando o token do cookie.
+ * Busca o usuário autenticado via GET /usuarios/me usando o token do cookie.
  * Retorna null se não há sessão ou o token foi rejeitado.
  */
 export async function getSessionUser(): Promise<SessionUser | null> {

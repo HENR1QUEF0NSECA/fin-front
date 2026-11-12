@@ -1,6 +1,6 @@
 /**
- * Tipos do dashboard, a partir de GET /transaction/dashboard/resumo?mes&ano
- * (ResumoMensalDTO) e GET /transaction/dashboard/evolucao?ano (EvolucaoMensalDTO).
+ * Tipos do dashboard, a partir de GET /transacoes/dashboard/resumo?mes&ano
+ * (ResumoMensalDTO) e GET /transacoes/dashboard/evolucao?ano (EvolucaoMensalDTO).
  * A conversão fica em services.ts.
  */
 

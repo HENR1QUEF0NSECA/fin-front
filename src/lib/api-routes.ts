@@ -1,28 +1,28 @@
 /**
  * Rotas do backend Spring Boot. Todas relativas a BACKEND_URL (http://localhost:8080/api).
- * Confirmadas pelo backend em 2026-06-10.
+ * Padrão do backend: português, plural, e o usuário sempre vem do token.
  */
 export const BACKEND_ROUTES = {
   auth: {
     login: "/auth/login",
-    register: "/users/register",
+    register: "/auth/registro",
   },
   users: {
-    me: "/users/me",
+    me: "/usuarios/me",
   },
   categories: {
-    list: "/categoria",
+    list: "/categorias",
   },
   // Os filtros por tipo, mês, período e categoria são feitos no navegador sobre a
   // lista completa, então só as rotas abaixo são usadas.
   transactions: {
-    list: "/transaction",
-    create: "/transaction",
-    delete: (id: string | number) => `/transaction/${id}`,
+    list: "/transacoes",
+    create: "/transacoes",
+    delete: (id: string | number) => `/transacoes/${id}`,
   },
   dashboard: {
-    resumo: "/transaction/dashboard/resumo",
-    evolucao: "/transaction/dashboard/evolucao",
+    resumo: "/transacoes/dashboard/resumo",
+    evolucao: "/transacoes/dashboard/evolucao",
   },
   budgets: {
     list: "/orcamentos",

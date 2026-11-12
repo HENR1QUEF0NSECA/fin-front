@@ -42,7 +42,12 @@ export async function listBudgets(): Promise<Budget[]> {
 export async function createBudget(input: CreateBudgetInput): Promise<Budget> {
   const raw = await apiFetch<unknown>(BACKEND_ROUTES.budgets.create, {
     method: "POST",
-    body: input,
+    body: {
+      categoriaId: input.idCategoria,
+      mes: input.mes,
+      ano: input.ano,
+      limite: input.limite,
+    },
   });
   const normalized = normalizeBudget(raw);
   if (!normalized) throw new Error("Resposta do servidor em formato inesperado");

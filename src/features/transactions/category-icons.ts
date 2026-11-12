@@ -15,15 +15,19 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
+// Chaves em minúsculas. As categorias do backend (data.sql) são: Transporte, Lazer,
+// Contas da casa, Saúde, Compras, Salário e Freelance; as demais são sinônimos
+// para categorias que forem criadas depois.
 const CATEGORY_ICON_MAP: Record<string, LucideIcon> = {
-  // pt-BR
   transporte: Car,
   carro: Car,
   lazer: Smile,
   entretenimento: Sparkles,
   salário: Briefcase,
   salario: Briefcase,
+  freelance: Briefcase,
   trabalho: Briefcase,
+  "contas da casa": Home,
   "contas de casa": Home,
   moradia: Home,
   aluguel: Home,
@@ -41,17 +45,7 @@ const CATEGORY_ICON_MAP: Record<string, LucideIcon> = {
   café: Coffee,
   cafe: Coffee,
   investimento: PiggyBank,
-  // en (backend seed data.sql)
-  transport: Car,
-  entertainment: Sparkles,
-  utilities: Home,
-  healthcare: HeartPulse,
-  shopping: ShoppingBag,
-  salary: Briefcase,
-  freelance: Briefcase,
-  food: Utensils,
-  education: BookOpen,
-  investment: PiggyBank,
+  investimentos: PiggyBank,
 };
 
 export function getCategoryIcon(categoria: string): LucideIcon {

@@ -16,14 +16,14 @@ function toBackendType(tipo: TransactionType): BackendTransactionType {
 
 /**
  * Converte o TransacaoResponseDTO do backend
- * ({ idTransacao, idCategoria, nomeCategoria, valor, dataHoraTransacao, descricao, tipo })
+ * ({ id, categoriaId, nomeCategoria, valor, dataHoraTransacao, descricao, tipo })
  * para o formato da UI. Descarta itens sem os campos obrigatórios.
  */
 function normalizeTransaction(raw: unknown): Transaction | null {
   if (!isRecord(raw)) return null;
 
-  const id = asNumber(raw.idTransacao);
-  const idCategoria = asNumber(raw.idCategoria);
+  const id = asNumber(raw.id);
+  const idCategoria = asNumber(raw.categoriaId);
   const valor = asNumber(raw.valor);
   const tipo = raw.tipo;
   if (id === null || idCategoria === null || valor === null) return null;
@@ -56,7 +56,7 @@ export async function createTransaction(
     body: {
       tipo: toBackendType(input.tipo),
       valor: input.valor,
-      idCategoria: input.idCategoria,
+      categoriaId: input.idCategoria,
       descricao: input.descricao,
     },
   });
