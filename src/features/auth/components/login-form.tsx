@@ -12,6 +12,23 @@ import { Input } from "@/components/ui/input";
 import { AuthApiError, login } from "@/features/auth/services";
 import { loginSchema, type LoginFormValues } from "@/features/auth/schemas";
 
+/**
+ * Para onde ir depois do login. Só aceita caminhos do próprio site: valores como
+ * "//site.com" ou "/\site.com" começam com "/", mas o navegador os trata como
+ * outro domínio. Por isso a checagem usa o parser de URL, e não startsWith("/").
+ */
+function safeNextPath(next: string | null): string {
+  const fallback = "/painel";
+  if (!next) return fallback;
+  try {
+    const url = new URL(next, window.location.origin);
+    if (url.origin !== window.location.origin) return fallback;
+    return `${url.pathname}${url.search}${url.hash}`;
+  } catch {
+    return fallback;
+  }
+}
+
 export function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -30,9 +47,7 @@ export function LoginForm() {
     setFormError(null);
     try {
       await login(values);
-      const next = searchParams.get("next");
-      const target = next && next.startsWith("/") ? next : "/painel";
-      router.replace(target);
+      router.replace(safeNextPath(searchParams.get("next")));
       router.refresh();
     } catch (error) {
       const message =
