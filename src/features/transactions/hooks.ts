@@ -1,6 +1,8 @@
 "use client";
 
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient, type QueryClient } from "@tanstack/react-query";
+
+import { budgetsKey } from "@/features/budgets/hooks";
 
 import {
   createTransaction,
@@ -18,14 +20,21 @@ export function useTransactions() {
   });
 }
 
+/**
+ * Uma transação nova ou excluída muda a lista, o painel e o valor gasto
+ * dos orçamentos (que o backend calcula), então os três precisam recarregar.
+ */
+function invalidateAfterTransactionChange(qc: QueryClient) {
+  qc.invalidateQueries({ queryKey: transactionsKey });
+  qc.invalidateQueries({ queryKey: ["dashboard"] });
+  qc.invalidateQueries({ queryKey: budgetsKey });
+}
+
 export function useCreateTransaction() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (input: CreateTransactionInput) => createTransaction(input),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: transactionsKey });
-      qc.invalidateQueries({ queryKey: ["dashboard"] });
-    },
+    onSuccess: () => invalidateAfterTransactionChange(qc),
   });
 }
 
@@ -33,9 +42,6 @@ export function useDeleteTransaction() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (id: number | string) => deleteTransaction(id),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: transactionsKey });
-      qc.invalidateQueries({ queryKey: ["dashboard"] });
-    },
+    onSuccess: () => invalidateAfterTransactionChange(qc),
   });
 }
