@@ -15,7 +15,10 @@ export function ThemeToggle() {
   const mounted = useSyncExternalStore(noopSubscribe, () => true, () => false);
 
   const current = (theme === "system" ? resolvedTheme : theme) ?? "light";
-  const isDark = current === "dark";
+  // O tema real só é conhecido no navegador. Até montar, tudo que depende dele
+  // (rótulo, ícone, texto) usa o mesmo valor que o servidor renderizou; senão o
+  // aria-label do servidor divergia do cliente e o React não o corrigia.
+  const isDark = mounted && current === "dark";
 
   return (
     <Button
@@ -34,7 +37,7 @@ export function ThemeToggle() {
       ) : (
         <Sun className="h-4 w-4 opacity-0" aria-hidden />
       )}
-      <span>{mounted && isDark ? "Tema claro" : "Tema escuro"}</span>
+      <span>{isDark ? "Tema claro" : "Tema escuro"}</span>
     </Button>
   );
 }
