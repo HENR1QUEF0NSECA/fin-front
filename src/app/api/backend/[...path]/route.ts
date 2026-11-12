@@ -68,7 +68,10 @@ async function handle(request: NextRequest, ctx: Ctx) {
     }
   });
 
-  const body = await backendRes.arrayBuffer();
+  // 204, 205 e 304 não podem ter corpo: o construtor de Response lança erro se
+  // receber um, mesmo vazio. O backend responde 204 nos DELETE.
+  const hasNoBody = [204, 205, 304].includes(backendRes.status);
+  const body = hasNoBody ? null : await backendRes.arrayBuffer();
   const response = new NextResponse(body, {
     status: backendRes.status,
     statusText: backendRes.statusText,
