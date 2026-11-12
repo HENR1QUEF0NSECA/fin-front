@@ -108,9 +108,11 @@ export function TransactionsView() {
         open={newOpen}
         onClose={() => setNewOpen(false)}
         onCreated={(res) => {
+          // O backend sinaliza alertaOrcamento quando o gasto da categoria no mês
+          // chega a 80% do limite (não só quando estoura).
           if (res.alertaOrcamento) {
             setAlert(
-              "Atenção: esta transação fez você ultrapassar o orçamento de uma categoria.",
+              "Atenção: com esta transação, você já usou 80% ou mais do orçamento desta categoria no mês.",
             );
           }
         }}
