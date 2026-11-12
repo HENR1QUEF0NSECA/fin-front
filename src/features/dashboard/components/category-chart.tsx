@@ -44,7 +44,9 @@ export function CategoryChart({ data, isLoading }: CategoryChartProps) {
                 nameKey="categoria"
                 innerRadius={50}
                 outerRadius={80}
-                paddingAngle={2}
+                // Espaço entre fatias só quando há mais de uma; com uma só
+                // categoria (100%) o espaço deixava o anel aberto, como um "C".
+                paddingAngle={data.length > 1 ? 2 : 0}
                 stroke="none"
               >
                 {data.map((entry, i) => (
