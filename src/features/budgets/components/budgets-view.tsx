@@ -13,9 +13,7 @@ import {
   buildCategoryMap,
   getCategoryName,
 } from "@/features/transactions/category-lookup";
-import { useTransactions } from "@/features/transactions/hooks";
 
-import { resolveSpent } from "../spent";
 import type { Budget } from "../types";
 import { BudgetCard } from "./budget-card";
 import { DeleteBudgetDialog } from "./delete-budget-dialog";
@@ -24,7 +22,6 @@ import { NewBudgetDialog } from "./new-budget-dialog";
 export function BudgetsView() {
   const budgets = useBudgets();
   const categories = useCategories();
-  const transactions = useTransactions();
 
   const [newOpen, setNewOpen] = useState(false);
   const [toDelete, setToDelete] = useState<Budget | null>(null);
@@ -43,12 +40,7 @@ export function BudgetsView() {
     });
   }, [budgets.data]);
 
-  const deletingName = toDelete
-    ? getCategoryName(
-        { idCategoria: toDelete.idCategoria, categoria: toDelete.categoria, nomeCategoria: toDelete.nomeCategoria },
-        categoryMap,
-      )
-    : undefined;
+  const deletingName = toDelete ? getCategoryName(toDelete, categoryMap) : undefined;
 
   return (
     <>
@@ -94,22 +86,15 @@ export function BudgetsView() {
         />
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-          {items.map((b) => {
-            const categoryName = getCategoryName(
-              { idCategoria: b.idCategoria, categoria: b.categoria, nomeCategoria: b.nomeCategoria },
-              categoryMap,
-            );
-            const spent = resolveSpent(b, transactions.data ?? []);
-            return (
-              <BudgetCard
-                key={b.id}
-                budget={b}
-                categoryName={categoryName}
-                spent={spent}
-                onRequestDelete={setToDelete}
-              />
-            );
-          })}
+          {items.map((b) => (
+            <BudgetCard
+              key={b.id}
+              budget={b}
+              categoryName={getCategoryName(b, categoryMap)}
+              spent={b.gasto}
+              onRequestDelete={setToDelete}
+            />
+          ))}
         </div>
       )}
 

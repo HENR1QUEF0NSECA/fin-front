@@ -8,20 +8,17 @@ export type TransactionType = "RECEITA" | "DESPESA";
 export type BackendTransactionType = "D" | "R";
 
 /**
- * Transação como retornada pelo backend. Campos otimistas:
- * - `idCategoria` sempre presente
- * - `categoria` ou `nomeCategoria` podem vir como nome (fazemos lookup via /categoria se não vier)
- * - `data` vem populada (backend define automaticamente)
+ * Transação no formato da UI. Vem do TransacaoResponseDTO do backend
+ * (idTransacao, dataHoraTransacao, ...), convertido em services.ts.
  */
 export type Transaction = {
   id: number;
   tipo: BackendTransactionType;
   valor: number;
   idCategoria: number;
+  nomeCategoria?: string;
   descricao: string;
-  data?: string; // backend define automaticamente; pode vir como ISO datetime ou date
-  categoria?: string; // nome — se backend já vier joined
-  nomeCategoria?: string; // alternativa caso o backend use esse nome
+  data?: string; // data e hora ISO sem fuso, definida pelo backend na criação
 };
 
 export type TransactionFilters = {

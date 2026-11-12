@@ -1,39 +1,35 @@
 import { apiFetch } from "@/lib/api-fetch";
 import { BACKEND_ROUTES } from "@/lib/api-routes";
-import { asNumber, asString } from "@/lib/parse";
+import { asNumber, asString, isRecord } from "@/lib/parse";
 
 import type { Budget, CreateBudgetInput } from "./types";
 
 /**
- * Normaliza o DTO do backend (`categoriaId`, `consumido`) para o shape do front.
- * Backend manda também `percentualUtilizado`, `saldo`, `alertaAtivo` — guardamos
- * `gasto` populado pra resolveSpent() não precisar somar transações no client.
+ * Converte o OrcamentoResponseDTO do backend
+ * ({ id, categoriaId, nomeCategoria, mes, ano, limite, consumido, ... })
+ * para o formato da UI. Descarta itens sem os campos obrigatórios.
  */
 function normalizeBudget(raw: unknown): Budget | null {
-  if (!raw || typeof raw !== "object") return null;
-  const o = raw as Record<string, unknown>;
+  if (!isRecord(raw)) return null;
 
-  const id = asNumber(o.id);
-  const idCategoria = asNumber(o.idCategoria ?? o.categoriaId);
-  const mes = asNumber(o.mes);
-  const ano = asNumber(o.ano);
-  const limite = asNumber(o.limite);
+  const id = asNumber(raw.id);
+  const idCategoria = asNumber(raw.categoriaId);
+  const mes = asNumber(raw.mes);
+  const ano = asNumber(raw.ano);
+  const limite = asNumber(raw.limite);
 
   if (id === null || idCategoria === null || mes === null || ano === null || limite === null) {
     return null;
   }
 
-  const gasto = asNumber(o.gasto ?? o.consumido ?? o.utilizado);
-
   return {
     id,
     idCategoria,
+    nomeCategoria: asString(raw.nomeCategoria),
     mes,
     ano,
     limite,
-    categoria: asString(o.categoria) ?? asString(o.nomeCategoria),
-    nomeCategoria: asString(o.nomeCategoria),
-    gasto: gasto ?? undefined,
+    gasto: asNumber(raw.consumido) ?? 0,
   };
 }
 

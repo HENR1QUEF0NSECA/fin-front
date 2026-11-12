@@ -1,6 +1,6 @@
 import { apiFetch } from "@/lib/api-fetch";
 import { BACKEND_ROUTES } from "@/lib/api-routes";
-import { asNumber, asString } from "@/lib/parse";
+import { asNumber, asString, isRecord } from "@/lib/parse";
 
 import type {
   BackendTransactionType,
@@ -15,17 +15,17 @@ function toBackendType(tipo: TransactionType): BackendTransactionType {
 }
 
 /**
- * Normaliza a resposta do backend (que usa `idTransacao` e `dataHoraTransacao`)
- * para o shape interno (`id` e `data`). Defensivo contra variações de nome.
+ * Converte o TransacaoResponseDTO do backend
+ * ({ idTransacao, idCategoria, nomeCategoria, valor, dataHoraTransacao, descricao, tipo })
+ * para o formato da UI. Descarta itens sem os campos obrigatórios.
  */
 function normalizeTransaction(raw: unknown): Transaction | null {
-  if (!raw || typeof raw !== "object") return null;
-  const o = raw as Record<string, unknown>;
+  if (!isRecord(raw)) return null;
 
-  const id = asNumber(o.id ?? o.idTransacao);
-  const idCategoria = asNumber(o.idCategoria);
-  const valor = asNumber(o.valor);
-  const tipo = o.tipo;
+  const id = asNumber(raw.idTransacao);
+  const idCategoria = asNumber(raw.idCategoria);
+  const valor = asNumber(raw.valor);
+  const tipo = raw.tipo;
   if (id === null || idCategoria === null || valor === null) return null;
   if (tipo !== "R" && tipo !== "D") return null;
 
@@ -34,10 +34,9 @@ function normalizeTransaction(raw: unknown): Transaction | null {
     tipo,
     valor,
     idCategoria,
-    descricao: asString(o.descricao) ?? "",
-    data: asString(o.data) ?? asString(o.dataHoraTransacao),
-    categoria: asString(o.categoria) ?? asString(o.nomeCategoria),
-    nomeCategoria: asString(o.nomeCategoria),
+    nomeCategoria: asString(raw.nomeCategoria),
+    descricao: asString(raw.descricao) ?? "",
+    data: asString(raw.dataHoraTransacao),
   };
 }
 
@@ -65,11 +64,9 @@ export async function createTransaction(
   if (!normalized) {
     throw new Error("Resposta do servidor em formato inesperado");
   }
-  // Preserva alertaOrcamento (campo extra, não faz parte do normalize base).
-  const alerta =
-    raw && typeof raw === "object" && "alertaOrcamento" in raw
-      ? Boolean((raw as { alertaOrcamento: unknown }).alertaOrcamento)
-      : undefined;
+  // alertaOrcamento só vem no POST: true quando o gasto da categoria no mês
+  // chega a 80% do orçamento.
+  const alerta = isRecord(raw) && raw.alertaOrcamento === true;
   return { ...normalized, alertaOrcamento: alerta };
 }
 

@@ -1,17 +1,16 @@
 /**
- * Orçamento mensal por categoria. Backend: POST /orcamentos body
- * {idCategoria, mes, ano, limite}. RF06 + RF10 (alertaOrcamento ao criar transação).
+ * Orçamento mensal por categoria (RF06), a partir do OrcamentoResponseDTO do
+ * backend. `gasto` é o `consumido` calculado pelo backend: soma das despesas da
+ * categoria no mês/ano do orçamento.
  */
 export type Budget = {
   id: number;
   idCategoria: number;
+  nomeCategoria?: string;
   mes: number; // 1..12
   ano: number;
   limite: number;
-  // Possíveis campos joined pelo backend (otimista):
-  categoria?: string;
-  nomeCategoria?: string;
-  gasto?: number;
+  gasto: number;
 };
 
 export type CreateBudgetInput = {

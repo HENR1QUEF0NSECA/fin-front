@@ -1,11 +1,10 @@
 /**
- * Tipos do dashboard. Backend retorna esses payloads em
- * GET /transaction/dashboard/resumo?mes&ano e GET /transaction/dashboard/evolucao?ano.
- * TODO: confirmar com backend o shape exato — normalizamos em services.ts.
+ * Tipos do dashboard, a partir de GET /transaction/dashboard/resumo?mes&ano
+ * (ResumoMensalDTO) e GET /transaction/dashboard/evolucao?ano (EvolucaoMensalDTO).
+ * A conversão fica em services.ts.
  */
 
 export type ResumoCategoria = {
-  idCategoria?: number;
   nome: string;
   total: number;
 };
@@ -14,7 +13,7 @@ export type DashboardResumo = {
   totalReceitas: number;
   totalDespesas: number;
   saldo: number;
-  categorias: ResumoCategoria[];
+  categorias: ResumoCategoria[]; // despesas do mês por categoria
 };
 
 export type EvolucaoMes = {

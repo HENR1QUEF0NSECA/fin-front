@@ -1,23 +1,16 @@
 import type { Category } from "@/features/categories/types";
 
-import type { Transaction } from "./types";
-
 /**
- * Resolve o nome de exibição da categoria de uma transação.
- * Prioridade: campo já joined no DTO → lookup pelo id no mapa → fallback genérico.
+ * Nome de exibição da categoria de uma transação ou orçamento: usa o
+ * `nomeCategoria` que o backend já manda e, se faltar, procura pelo id na
+ * lista de categorias.
  */
 export function getCategoryName(
-  transaction: Pick<Transaction, "idCategoria" | "categoria" | "nomeCategoria">,
+  item: { idCategoria: number; nomeCategoria?: string },
   categoriesById: Map<number, Category>,
 ): string {
-  if (typeof transaction.categoria === "string" && transaction.categoria.trim()) {
-    return transaction.categoria;
-  }
-  if (typeof transaction.nomeCategoria === "string" && transaction.nomeCategoria.trim()) {
-    return transaction.nomeCategoria;
-  }
-  const found = categoriesById.get(transaction.idCategoria);
-  return found?.nome ?? `Categoria #${transaction.idCategoria}`;
+  if (item.nomeCategoria?.trim()) return item.nomeCategoria;
+  return categoriesById.get(item.idCategoria)?.nome ?? `Categoria #${item.idCategoria}`;
 }
 
 export function buildCategoryMap(categories: Category[]): Map<number, Category> {

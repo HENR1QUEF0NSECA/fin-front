@@ -5,16 +5,13 @@ import { backendFetch } from "./backend";
 import { getSessionToken } from "./session";
 
 export type SessionUser = {
-  id?: number;
   nome: string;
-  email: string;
 };
 
-type BackendUser = {
-  id?: number;
+/** GET /users/me devolve os dados do token: { userId, nome, mensagem }. */
+type MeResponse = {
+  userId?: number;
   nome?: string;
-  name?: string;
-  email?: string;
 };
 
 /**
@@ -26,12 +23,8 @@ export async function getSessionUser(): Promise<SessionUser | null> {
   if (!token) return null;
 
   try {
-    const user = await backendFetch<BackendUser>(BACKEND_ROUTES.users.me, {
-      token,
-    });
-    const nome = user.nome ?? user.name ?? user.email ?? "Usuário";
-    const email = user.email ?? "";
-    return { id: user.id, nome, email };
+    const me = await backendFetch<MeResponse>(BACKEND_ROUTES.users.me, { token });
+    return { nome: me.nome?.trim() || "Usuário" };
   } catch {
     // Token inválido/expirado ou backend offline — tratamos como sem sessão.
     return null;
