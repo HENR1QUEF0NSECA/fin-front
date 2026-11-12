@@ -36,6 +36,5 @@ export function resolveSpent(
   transactions: Transaction[],
 ): number {
   if (typeof budget.gasto === "number") return budget.gasto;
-  if (typeof budget.utilizado === "number") return budget.utilizado;
   return computeSpentForBudget(budget, transactions);
 }

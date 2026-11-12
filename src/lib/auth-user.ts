@@ -1,7 +1,7 @@
 import "server-only";
 
 import { BACKEND_ROUTES } from "./api-routes";
-import { backendFetch, BackendError } from "./backend";
+import { backendFetch } from "./backend";
 import { getSessionToken } from "./session";
 
 export type SessionUser = {
@@ -32,9 +32,8 @@ export async function getSessionUser(): Promise<SessionUser | null> {
     const nome = user.nome ?? user.name ?? user.email ?? "Usuário";
     const email = user.email ?? "";
     return { id: user.id, nome, email };
-  } catch (error) {
+  } catch {
     // Token inválido/expirado ou backend offline — tratamos como sem sessão.
-    if (error instanceof BackendError && error.status === 401) return null;
     return null;
   }
 }

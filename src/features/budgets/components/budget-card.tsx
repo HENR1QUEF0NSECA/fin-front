@@ -1,12 +1,11 @@
 "use client";
 
-import { AlertTriangle, CheckCircle2, Target, Trash2 } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Trash2 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { useDeleteBudget } from "@/features/budgets/hooks";
 import { formatCurrency } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { usePrivacy } from "@/providers/privacy-provider";
@@ -42,7 +41,6 @@ export function BudgetCard({
   onRequestDelete,
 }: BudgetCardProps) {
   const { isPrivate } = usePrivacy();
-  const remove = useDeleteBudget();
 
   const limit = Math.max(budget.limite, 0.0001);
   // Percentual real (pode passar de 100%); a barra limita o preenchimento sozinha.
@@ -88,7 +86,6 @@ export function BudgetCard({
             size="icon"
             aria-label={`Excluir orçamento de ${categoryName}`}
             onClick={() => onRequestDelete(budget)}
-            disabled={remove.isPending}
             className="text-muted-foreground hover:text-danger"
           >
             <Trash2 className="h-4 w-4" aria-hidden />
@@ -125,6 +122,3 @@ export function BudgetCard({
     </Card>
   );
 }
-
-// Reusa Target só pra evitar lint de import não usado quando isOver
-void Target;

@@ -6,7 +6,6 @@ export class AuthApiError extends Error {
   constructor(
     public status: number,
     message: string,
-    public fields?: Record<string, string[] | undefined>,
   ) {
     super(message);
     this.name = "AuthApiError";
@@ -24,11 +23,7 @@ async function parseError(response: Response): Promise<AuthApiError> {
     (data && typeof data === "object" && "error" in data && typeof (data as { error: unknown }).error === "string"
       ? (data as { error: string }).error
       : null) ?? "Não foi possível concluir a operação";
-  const fields =
-    data && typeof data === "object" && "fields" in data && data.fields && typeof data.fields === "object"
-      ? (data as { fields: Record<string, string[] | undefined> }).fields
-      : undefined;
-  return new AuthApiError(response.status, message, fields);
+  return new AuthApiError(response.status, message);
 }
 
 export async function login(values: LoginFormValues): Promise<void> {

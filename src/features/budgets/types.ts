@@ -12,16 +12,11 @@ export type Budget = {
   categoria?: string;
   nomeCategoria?: string;
   gasto?: number;
-  utilizado?: number;
 };
 
 export type CreateBudgetInput = {
   idCategoria: number;
   mes: number;
   ano: number;
-  limite: number;
-};
-
-export type UpdateBudgetInput = {
   limite: number;
 };

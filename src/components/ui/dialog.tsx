@@ -12,7 +12,6 @@ type DialogProps = {
   title: string;
   description?: string;
   children: ReactNode;
-  footer?: ReactNode;
   size?: "sm" | "md" | "lg";
   className?: string;
 };
@@ -42,7 +41,6 @@ export function Dialog({
   title,
   description,
   children,
-  footer,
   size = "md",
   className,
 }: DialogProps) {
@@ -146,11 +144,6 @@ export function Dialog({
         <div ref={bodyRef} className="px-6 py-5">
           {children}
         </div>
-        {footer ? (
-          <div className="flex flex-wrap items-center justify-end gap-2 border-t border-border bg-muted/30 px-6 py-3">
-            {footer}
-          </div>
-        ) : null}
       </div>
     </div>,
     document.body,

@@ -1,7 +1,7 @@
 import { apiFetch } from "@/lib/api-fetch";
 import { BACKEND_ROUTES } from "@/lib/api-routes";
 
-import type { Budget, CreateBudgetInput, UpdateBudgetInput } from "./types";
+import type { Budget, CreateBudgetInput } from "./types";
 
 function asNumber(value: unknown): number | null {
   if (typeof value === "number" && Number.isFinite(value)) return value;
@@ -58,19 +58,6 @@ export async function listBudgets(): Promise<Budget[]> {
 export async function createBudget(input: CreateBudgetInput): Promise<Budget> {
   const raw = await apiFetch<unknown>(BACKEND_ROUTES.budgets.create, {
     method: "POST",
-    body: input,
-  });
-  const normalized = normalizeBudget(raw);
-  if (!normalized) throw new Error("Resposta do servidor em formato inesperado");
-  return normalized;
-}
-
-export async function updateBudget(
-  id: number | string,
-  input: UpdateBudgetInput,
-): Promise<Budget> {
-  const raw = await apiFetch<unknown>(BACKEND_ROUTES.budgets.update(id), {
-    method: "PUT",
     body: input,
   });
   const normalized = normalizeBudget(raw);

@@ -11,18 +11,14 @@ export const BACKEND_ROUTES = {
     me: "/users/me",
   },
   categories: {
-    // TODO: confirmar — assumido /categoria (singular, padrão do backend).
     list: "/categoria",
   },
+  // Os filtros por tipo, mês, período e categoria são feitos no navegador sobre a
+  // lista completa, então só as rotas abaixo são usadas.
   transactions: {
     list: "/transaction",
     create: "/transaction",
     delete: (id: string | number) => `/transaction/${id}`,
-    byType: (tipo: "D" | "R") => `/transaction/tipo/${tipo}`,
-    byMonth: "/transaction/mes",
-    byPeriod: "/transaction/periodo",
-    byCategory: (idCategoria: string | number) =>
-      `/transaction/categoria/${idCategoria}`,
   },
   dashboard: {
     resumo: "/transaction/dashboard/resumo",
@@ -31,12 +27,7 @@ export const BACKEND_ROUTES = {
   budgets: {
     list: "/orcamentos",
     create: "/orcamentos",
-    get: (id: string | number) => `/orcamentos/${id}`,
-    update: (id: string | number) => `/orcamentos/${id}`,
     delete: (id: string | number) => `/orcamentos/${id}`,
-    byMonth: "/orcamentos/mes",
-    byCategoryMonth: (idCategoria: string | number) =>
-      `/orcamentos/categoria/${idCategoria}/mes`,
   },
 } as const;
 

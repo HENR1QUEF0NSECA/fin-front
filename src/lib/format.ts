@@ -16,11 +16,6 @@ const longDateFormatter = new Intl.DateTimeFormat("pt-BR", {
   year: "numeric",
 });
 
-const monthFormatter = new Intl.DateTimeFormat("pt-BR", {
-  month: "short",
-  year: "numeric",
-});
-
 export const PRIVACY_PLACEHOLDER = "R$ ••••••";
 
 export function formatCurrency(value: number, isPrivate = false): string {
@@ -36,15 +31,4 @@ export function formatDate(value: string | Date): string {
 export function formatLongDate(value: string | Date): string {
   const date = typeof value === "string" ? new Date(value) : value;
   return longDateFormatter.format(date);
-}
-
-export function formatMonth(value: string | Date): string {
-  const date = typeof value === "string" ? new Date(value) : value;
-  return monthFormatter.format(date);
-}
-
-export function daysUntil(target: string | Date): number {
-  const date = typeof target === "string" ? new Date(target) : target;
-  const diffMs = date.getTime() - Date.now();
-  return Math.max(0, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));
 }
