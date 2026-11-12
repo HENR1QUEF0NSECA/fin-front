@@ -61,7 +61,17 @@ export function DashboardView() {
     [transactions.data],
   );
 
+  // Receita, Despesas e Economia são do mês atual (vêm do resumo mensal).
+  // Saldo Total é o acumulado de todas as transações.
   const economia = Math.max(0, summary.saldo);
+  const saldoTotal = useMemo(
+    () =>
+      (transactions.data ?? []).reduce(
+        (sum, t) => sum + (t.tipo === "R" ? t.valor : -t.valor),
+        0,
+      ),
+    [transactions.data],
+  );
 
   return (
     <>
@@ -77,6 +87,7 @@ export function DashboardView() {
           value={resumo.isLoading ? null : summary.totalReceitas}
           icon={ArrowUpCircle}
           tone="success"
+          hint="Neste mês"
           isLoading={resumo.isLoading}
         />
         <StatCard
@@ -84,6 +95,7 @@ export function DashboardView() {
           value={resumo.isLoading ? null : summary.totalDespesas}
           icon={ArrowDownCircle}
           tone="danger"
+          hint="Neste mês"
           isLoading={resumo.isLoading}
         />
         <StatCard
@@ -91,15 +103,16 @@ export function DashboardView() {
           value={resumo.isLoading ? null : economia}
           icon={PiggyBank}
           tone="info"
-          hint="Quanto sobrou"
+          hint="Quanto sobrou neste mês"
           isLoading={resumo.isLoading}
         />
         <StatCard
           label="Saldo Total"
-          value={resumo.isLoading ? null : summary.saldo}
+          value={transactions.isLoading ? null : saldoTotal}
           icon={Wallet}
           tone="primary"
-          isLoading={resumo.isLoading}
+          hint="Todas as transações"
+          isLoading={transactions.isLoading}
         />
       </section>
 

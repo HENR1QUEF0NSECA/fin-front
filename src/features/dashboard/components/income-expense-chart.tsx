@@ -36,7 +36,7 @@ export function IncomeExpenseChart({ data, isLoading }: IncomeExpenseChartProps)
   return (
     <ChartShell
       title="Receitas vs Despesas"
-      description="Comparativo dos últimos meses"
+      description="Comparativo de cada mês do ano atual"
       isLoading={isLoading}
       isEmpty={isEmpty}
     >
