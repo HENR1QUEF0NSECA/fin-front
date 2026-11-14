@@ -1,7 +1,3 @@
-/**
- * Rotas do backend Spring Boot. Todas relativas a BACKEND_URL (http://localhost:8080/api).
- * Padrão do backend: português, plural, e o usuário sempre vem do token.
- */
 export const BACKEND_ROUTES = {
   auth: {
     login: "/auth/login",
@@ -13,8 +9,6 @@ export const BACKEND_ROUTES = {
   categories: {
     list: "/categorias",
   },
-  // Os filtros por tipo, mês, período e categoria são feitos no navegador sobre a
-  // lista completa, então só as rotas abaixo são usadas.
   transactions: {
     list: "/transacoes",
     create: "/transacoes",
@@ -31,9 +25,6 @@ export const BACKEND_ROUTES = {
   },
 } as const;
 
-/**
- * Rotas do BFF (Route Handlers do próprio Next). Same-origin a partir do browser.
- */
 export const BFF_ROUTES = {
   auth: {
     login: "/api/auth/login",

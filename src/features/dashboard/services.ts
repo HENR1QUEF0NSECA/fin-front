@@ -13,10 +13,6 @@ function num(value: unknown): number {
   return asNumber(value) ?? 0;
 }
 
-/**
- * ResumoMensalDTO: { mes, ano, totalReceitas, totalDespesas, saldo,
- * despesasPorCategoria: [{ categoria, total }], receitasPorCategoria }.
- */
 function normalizeResumo(payload: unknown): DashboardResumo {
   const obj = isRecord(payload) ? payload : {};
   const categorias: ResumoCategoria[] = Array.isArray(obj.despesasPorCategoria)
@@ -34,10 +30,6 @@ function normalizeResumo(payload: unknown): DashboardResumo {
   };
 }
 
-/**
- * EvolucaoMensalDTO: { ano, receitas: [{ mes, total }], despesas: [{ mes, total }] }.
- * Só vêm os meses com movimento; quem desenha o gráfico preenche os demais com 0.
- */
 function normalizeEvolucao(payload: unknown, ano: number): DashboardEvolucao {
   const obj = isRecord(payload) ? payload : {};
   const byMonth = new Map<number, EvolucaoMes>();

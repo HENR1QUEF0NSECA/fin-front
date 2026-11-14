@@ -68,8 +68,6 @@ async function handle(request: NextRequest, ctx: Ctx) {
     }
   });
 
-  // 204, 205 e 304 não podem ter corpo: o construtor de Response lança erro se
-  // receber um, mesmo vazio. O backend responde 204 nos DELETE.
   const hasNoBody = [204, 205, 304].includes(backendRes.status);
   const body = hasNoBody ? null : await backendRes.arrayBuffer();
   const response = new NextResponse(body, {
@@ -78,7 +76,6 @@ async function handle(request: NextRequest, ctx: Ctx) {
     headers: responseHeaders,
   });
 
-  // Token expirou ou inválido: limpa o cookie para o middleware redirecionar.
   if (backendRes.status === 401) {
     clearSessionCookie(response);
   }

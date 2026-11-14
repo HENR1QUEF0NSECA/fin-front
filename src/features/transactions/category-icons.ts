@@ -15,9 +15,6 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
-// Chaves em minúsculas. As categorias do backend (data.sql) são: Transporte, Lazer,
-// Contas da casa, Saúde, Compras, Salário e Freelance; as demais são sinônimos
-// para categorias que forem criadas depois.
 const CATEGORY_ICON_MAP: Record<string, LucideIcon> = {
   transporte: Car,
   carro: Car,

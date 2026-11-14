@@ -8,7 +8,7 @@ const toneClass = {
 } as const;
 
 type ProgressProps = {
-  value: number; // 0..100 (valores acima de 100 enchem a barra)
+  value: number;
   tone?: keyof typeof toneClass;
   className?: string;
   label?: string;

@@ -1,10 +1,5 @@
 import type { Category } from "@/features/categories/types";
 
-/**
- * Nome de exibição da categoria de uma transação ou orçamento: usa o
- * `nomeCategoria` que o backend já manda e, se faltar, procura pelo id na
- * lista de categorias.
- */
 export function getCategoryName(
   item: { idCategoria: number; nomeCategoria?: string },
   categoriesById: Map<number, Category>,

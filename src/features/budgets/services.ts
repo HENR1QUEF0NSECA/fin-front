@@ -4,11 +4,6 @@ import { asNumber, asString, isRecord } from "@/lib/parse";
 
 import type { Budget, CreateBudgetInput } from "./types";
 
-/**
- * Converte o OrcamentoResponseDTO do backend
- * ({ id, categoriaId, nomeCategoria, mes, ano, limite, consumido, ... })
- * para o formato da UI. Descarta itens sem os campos obrigatórios.
- */
 function normalizeBudget(raw: unknown): Budget | null {
   if (!isRecord(raw)) return null;
 

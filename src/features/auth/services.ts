@@ -17,7 +17,6 @@ async function parseError(response: Response): Promise<AuthApiError> {
   try {
     data = await response.json();
   } catch {
-    // ignore
   }
   const message =
     (data && typeof data === "object" && "error" in data && typeof (data as { error: unknown }).error === "string"

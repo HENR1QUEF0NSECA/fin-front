@@ -30,7 +30,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true }, { status: 201 });
   } catch (error) {
     if (error instanceof BackendError) {
-      // Conflict / e-mail já cadastrado: deixe o status do backend passar quando útil.
       const status = error.status >= 400 && error.status < 500 ? error.status : 502;
       const message =
         status === 409

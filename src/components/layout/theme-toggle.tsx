@@ -10,14 +10,9 @@ const noopSubscribe = () => () => {};
 
 export function ThemeToggle() {
   const { theme, resolvedTheme, setTheme } = useTheme();
-  // true só no navegador. No servidor e na hidratação é false, então o ícone só
-  // aparece quando o tema real já é conhecido, sem erro de hidratação.
   const mounted = useSyncExternalStore(noopSubscribe, () => true, () => false);
 
   const current = (theme === "system" ? resolvedTheme : theme) ?? "light";
-  // O tema real só é conhecido no navegador. Até montar, tudo que depende dele
-  // (rótulo, ícone, texto) usa o mesmo valor que o servidor renderizou; senão o
-  // aria-label do servidor divergia do cliente e o React não o corrigia.
   const isDark = mounted && current === "dark";
 
   return (

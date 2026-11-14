@@ -17,7 +17,6 @@ export type CategorySlice = {
   share: number;
 };
 
-/** Cria 12 buckets do ano (1..12) preenchendo com 0 onde não houver dado. */
 export function toMonthlySeries(evolucao: DashboardEvolucao): MonthlyPoint[] {
   const byMonth = new Map<number, { receita: number; despesa: number }>();
   for (const m of evolucao.meses) {

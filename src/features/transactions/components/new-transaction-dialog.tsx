@@ -27,8 +27,6 @@ type NewTransactionDialogProps = {
   onCreated?: (response: CreateTransactionResponse) => void;
 };
 
-// `valor` fica de fora pra o placeholder "0,00" aparecer.
-// React Hook Form mantém o campo como undefined até o usuário digitar.
 const defaultValues: Partial<TransactionFormValues> = {
   tipo: "DESPESA",
   idCategoria: 0,

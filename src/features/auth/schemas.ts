@@ -5,7 +5,6 @@ export const loginSchema = z.object({
   senha: z.string().min(1, "Informe sua senha"),
 });
 
-// Limites iguais aos do backend (UserDTO): nome de 3 a 100 caracteres, e-mail até 150.
 export const registerSchema = z
   .object({
     nome: z

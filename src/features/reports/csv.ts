@@ -1,9 +1,5 @@
 import { formatDate } from "@/lib/format";
 
-/**
- * Linha pronta pra CSV — desacoplada do DTO de Transaction
- * (a view enriquece com o nome da categoria via lookup).
- */
 export type TransactionCsvRow = {
   data?: string;
   tipo: "RECEITA" | "DESPESA";
@@ -12,11 +8,6 @@ export type TransactionCsvRow = {
   valor: number;
 };
 
-/**
- * Coloca o valor entre aspas. Um texto que começa com = + - @ (ou tab/CR) vira
- * fórmula ao abrir o CSV no Excel/LibreOffice; o apóstrofo na frente faz a
- * planilha tratá-lo como texto (recomendação da OWASP contra CSV injection).
- */
 function escape(value: string): string {
   const safe = /^[=+\-@\t\r]/.test(value) ? `'${value}` : value;
   return `"${safe.replace(/"/g, '""')}"`;
@@ -36,7 +27,6 @@ export function transactionsToCsv(rows: TransactionCsvRow[]): string {
 
 export function downloadTransactionsCsv(rows: TransactionCsvRow[]): void {
   const csv = transactionsToCsv(rows);
-  // BOM para garantir UTF-8 no Excel
   const blob = new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");

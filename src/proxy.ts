@@ -30,12 +30,6 @@ export function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for:
-     * - api routes (BFF own handlers)
-     * - _next/static, _next/image (static assets)
-     * - favicon.ico and other metadata files
-     */
     "/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
   ],
 };

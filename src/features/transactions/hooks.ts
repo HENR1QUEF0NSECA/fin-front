@@ -20,10 +20,6 @@ export function useTransactions() {
   });
 }
 
-/**
- * Uma transação nova ou excluída muda a lista, o painel e o valor gasto
- * dos orçamentos (que o backend calcula), então os três precisam recarregar.
- */
 function invalidateAfterTransactionChange(qc: QueryClient) {
   qc.invalidateQueries({ queryKey: transactionsKey });
   qc.invalidateQueries({ queryKey: ["dashboard"] });

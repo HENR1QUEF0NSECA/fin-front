@@ -41,7 +41,6 @@ export function ReportsView() {
     const enriched = transactions.data.map((t) => ({
       ...t,
       categoria: getCategoryName(t, categoryMap),
-      // CSV usa enum interno por extenso pra legibilidade
       tipo:
         t.tipo === "R" ? ("RECEITA" as const) : ("DESPESA" as const),
     }));

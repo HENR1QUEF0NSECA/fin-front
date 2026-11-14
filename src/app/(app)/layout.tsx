@@ -7,9 +7,6 @@ import { getSessionUser } from "@/lib/auth-user";
 export default async function AppLayout({ children }: { children: ReactNode }) {
   const user = await getSessionUser();
   if (!user) {
-    // Sem sessão válida. Passa pela rota que apaga o cookie antes de ir ao login:
-    // ir direto para /login com o cookie ainda lá faria o proxy.ts devolver para
-    // /painel, em loop.
     redirect("/api/auth/expired");
   }
 

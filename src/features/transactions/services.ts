@@ -14,11 +14,6 @@ function toBackendType(tipo: TransactionType): BackendTransactionType {
   return tipo === "RECEITA" ? "R" : "D";
 }
 
-/**
- * Converte o TransacaoResponseDTO do backend
- * ({ id, categoriaId, nomeCategoria, valor, dataHoraTransacao, descricao, tipo })
- * para o formato da UI. Descarta itens sem os campos obrigatórios.
- */
 function normalizeTransaction(raw: unknown): Transaction | null {
   if (!isRecord(raw)) return null;
 
@@ -64,8 +59,6 @@ export async function createTransaction(
   if (!normalized) {
     throw new Error("Resposta do servidor em formato inesperado");
   }
-  // alertaOrcamento só vem no POST: true quando o gasto da categoria no mês
-  // chega a 80% do orçamento.
   const alerta = isRecord(raw) && raw.alertaOrcamento === true;
   return { ...normalized, alertaOrcamento: alerta };
 }

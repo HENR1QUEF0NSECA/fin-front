@@ -38,17 +38,18 @@ type NewBudgetDialogProps = {
   onClose: () => void;
 };
 
-export function NewBudgetDialog({ open, onClose }: NewBudgetDialogProps) {
-  const categories = useCategories();
-  const create = useCreateBudget();
+function getDefaultValues(): Partial<BudgetFormValues> {
   const now = new Date();
-
-  // `limite` fica de fora pra o placeholder "0,00" aparecer.
-  const defaultValues: Partial<BudgetFormValues> = {
+  return {
     idCategoria: 0,
     mes: now.getMonth() + 1,
     ano: now.getFullYear(),
   };
+}
+
+export function NewBudgetDialog({ open, onClose }: NewBudgetDialogProps) {
+  const categories = useCategories();
+  const create = useCreateBudget();
 
   const {
     register,
@@ -58,13 +59,12 @@ export function NewBudgetDialog({ open, onClose }: NewBudgetDialogProps) {
     formState: { errors, isSubmitting },
   } = useForm<BudgetFormValues>({
     resolver: zodResolver(budgetFormSchema),
-    defaultValues,
+    defaultValues: getDefaultValues(),
   });
 
   useEffect(() => {
-    if (open) reset(defaultValues);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open]);
+    if (open) reset(getDefaultValues());
+  }, [open, reset]);
 
   async function onSubmit(values: BudgetFormValues) {
     try {

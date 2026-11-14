@@ -12,11 +12,6 @@ import { Input } from "@/components/ui/input";
 import { AuthApiError, login } from "@/features/auth/services";
 import { loginSchema, type LoginFormValues } from "@/features/auth/schemas";
 
-/**
- * Para onde ir depois do login. Só aceita caminhos do próprio site: valores como
- * "//site.com" ou "/\site.com" começam com "/", mas o navegador os trata como
- * outro domínio. Por isso a checagem usa o parser de URL, e não startsWith("/").
- */
 function safeNextPath(next: string | null): string {
   const fallback = "/painel";
   if (!next) return fallback;

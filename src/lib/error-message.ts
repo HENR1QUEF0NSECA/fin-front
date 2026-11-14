@@ -1,13 +1,3 @@
-/**
- * Extrai a mensagem de erro de um corpo de resposta JSON, ou null se não houver.
- *
- * Formatos tratados:
- * - backend Spring (handler global): { status, erro, campos?, timestamp }. Em erro
- *   de validação, `erro` é genérico ("Dados inválidos") e `campos` traz a mensagem
- *   de cada campo, que é o que o usuário precisa ler;
- * - rotas do próprio Next (BFF): { error };
- * - resposta padrão do Spring fora do handler global: { error, message }.
- */
 export function extractErrorMessage(data: unknown): string | null {
   if (!data || typeof data !== "object") return null;
   const obj = data as Record<string, unknown>;

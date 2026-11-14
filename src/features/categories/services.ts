@@ -4,7 +4,6 @@ import { asNumber, asString, isRecord } from "@/lib/parse";
 
 import type { Category } from "./types";
 
-/** GET /categorias devolve [{ id, nome }]; itens incompletos são descartados. */
 function normalize(payload: unknown): Category[] {
   if (!Array.isArray(payload)) return [];
   return payload.flatMap((entry) => {

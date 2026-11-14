@@ -12,7 +12,6 @@ import {
 const STORAGE_KEY = "finplan:privacy";
 const CHANGE_EVENT = "finplan:privacy-change";
 
-// Usado quando o localStorage está indisponível (ex.: bloqueado pelo navegador).
 let memoryValue = false;
 
 function readPrivacy(): boolean {
@@ -29,13 +28,11 @@ function writePrivacy(value: boolean): void {
   try {
     window.localStorage.setItem(STORAGE_KEY, value ? "1" : "0");
   } catch {
-    // sem localStorage: o valor fica só em memória nesta aba
   }
   window.dispatchEvent(new Event(CHANGE_EVENT));
 }
 
 function subscribe(onChange: () => void): () => void {
-  // "storage" avisa mudanças feitas em outras abas; CHANGE_EVENT, as desta aba.
   window.addEventListener("storage", onChange);
   window.addEventListener(CHANGE_EVENT, onChange);
   return () => {
@@ -44,7 +41,6 @@ function subscribe(onChange: () => void): () => void {
   };
 }
 
-// No servidor e durante a hidratação o modo privado começa desligado.
 function getServerSnapshot(): boolean {
   return false;
 }
@@ -56,11 +52,6 @@ type PrivacyContextValue = {
 
 const PrivacyContext = createContext<PrivacyContextValue | null>(null);
 
-/**
- * Modo privado (esconde valores), salvo no localStorage. Lido com
- * useSyncExternalStore em vez de um useEffect + setState, o que evita um
- * render extra e mantém as abas abertas sincronizadas.
- */
 export function PrivacyProvider({ children }: { children: ReactNode }) {
   const isPrivate = useSyncExternalStore(subscribe, readPrivacy, getServerSnapshot);
 

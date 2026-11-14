@@ -33,7 +33,6 @@ export function BudgetsView() {
 
   const items = useMemo(() => {
     const list = budgets.data ?? [];
-    // Mais recentes primeiro (ano desc, mês desc)
     return [...list].sort((a, b) => {
       if (a.ano !== b.ano) return b.ano - a.ano;
       return b.mes - a.mes;

@@ -32,10 +32,6 @@ function buildPath(path: string, searchParams?: ApiFetchOptions["searchParams"])
   return queryString ? `${base}?${queryString}` : base;
 }
 
-/**
- * Faz chamadas ao BFF (/api/backend/*) que repassa para o backend Spring Boot.
- * Same-origin: o browser envia automaticamente o cookie httpOnly de sessão.
- */
 export async function apiFetch<T>(
   path: string,
   options: ApiFetchOptions = {},
@@ -57,8 +53,6 @@ export async function apiFetch<T>(
   const data = hasJson ? await res.json().catch(() => null) : null;
 
   if (!res.ok) {
-    // O Spring não envia o texto do status (statusText vem vazio), então o
-    // fallback final é uma mensagem genérica, para nunca exibir erro em branco.
     const message =
       extractErrorMessage(data) ?? (res.statusText || "Não foi possível concluir a operação.");
     throw new ApiError(res.status, message, data);

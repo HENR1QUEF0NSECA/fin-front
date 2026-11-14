@@ -47,11 +47,6 @@ export function Dialog({
   const contentRef = useRef<HTMLDivElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
 
-  // Effect Event: sempre usa o onClose mais recente sem ser dependência do efeito.
-  // Antes era um useCallback([onClose]); como os pais passam uma arrow nova a cada
-  // render, qualquer re-render do pai recriava o efeito abaixo, e o foco voltava ao
-  // botão que abriu o modal e depois ia para o primeiro elemento, tirando o usuário
-  // do campo em que estava digitando.
   const handleKey = useEffectEvent((event: KeyboardEvent) => {
     if (event.key === "Escape") {
       event.stopPropagation();
@@ -81,8 +76,6 @@ export function Dialog({
     const onKeyDown = (event: KeyboardEvent) => handleKey(event);
     document.addEventListener("keydown", onKeyDown);
 
-    // Foco inicial: primeiro campo do formulário; sem campos (ex.: confirmação de
-    // exclusão), o primeiro botão do conteúdo; só então o botão Fechar do cabeçalho.
     const target =
       bodyRef.current?.querySelector<HTMLElement>(FIELD_SELECTOR) ??
       getFocusables(bodyRef.current)[0] ??
@@ -92,7 +85,6 @@ export function Dialog({
     return () => {
       document.removeEventListener("keydown", onKeyDown);
       document.body.style.overflow = prevOverflow;
-      // Devolve o foco ao elemento que abriu o modal
       previouslyFocused?.focus?.();
     };
   }, [open]);

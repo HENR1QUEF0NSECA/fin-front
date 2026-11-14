@@ -28,7 +28,6 @@ export function BudgetCard({
   const { isPrivate } = usePrivacy();
 
   const limit = Math.max(budget.limite, 0.0001);
-  // Percentual real (pode passar de 100%); a barra limita o preenchimento sozinha.
   const pct = (spent / limit) * 100;
   const isOver = spent > budget.limite;
   const isNear = !isOver && pct >= 80;

@@ -1,16 +1,7 @@
-/**
- * Tipo interno (UI) — usa palavras por extenso pra legibilidade.
- * Wire-format do backend usa "D"|"R" — conversão em services.ts.
- */
 export type TransactionType = "RECEITA" | "DESPESA";
 
-/** Wire type aceito pelo backend. */
 export type BackendTransactionType = "D" | "R";
 
-/**
- * Transação no formato da UI. Vem do TransacaoResponseDTO do backend
- * (id, categoriaId, dataHoraTransacao, ...), convertido em services.ts.
- */
 export type Transaction = {
   id: number;
   tipo: BackendTransactionType;
@@ -18,7 +9,7 @@ export type Transaction = {
   idCategoria: number;
   nomeCategoria?: string;
   descricao: string;
-  data?: string; // data e hora ISO sem fuso, definida pelo backend na criação
+  data?: string;
 };
 
 export type TransactionFilters = {

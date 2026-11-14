@@ -44,10 +44,6 @@ async function parseResponse(res: Response): Promise<unknown> {
   return text.length > 0 ? text : null;
 }
 
-/**
- * Fetch server-only do backend. NÃO importar em código de cliente.
- * Recebe o token explicitamente (route handler que ler o cookie repassa).
- */
 export async function backendFetch<T>(
   path: string,
   options: BackendFetchOptions = {},

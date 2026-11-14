@@ -21,7 +21,6 @@ function sortByDateDesc<T extends { data?: string; id: number | string }>(items:
     const da = a.data ?? "";
     const db = b.data ?? "";
     if (db !== da) return db.localeCompare(da);
-    // fallback: id desc (mais recente provavelmente tem id maior)
     return String(b.id).localeCompare(String(a.id));
   });
 }
@@ -61,8 +60,6 @@ export function DashboardView() {
     [transactions.data],
   );
 
-  // Receita, Despesas e Economia são do mês atual (vêm do resumo mensal).
-  // Saldo Total é o acumulado de todas as transações.
   const economia = Math.max(0, summary.saldo);
   const saldoTotal = useMemo(
     () =>
