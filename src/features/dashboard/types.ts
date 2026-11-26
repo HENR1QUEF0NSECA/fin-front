@@ -9,6 +9,7 @@ export type DashboardResumo = {
   totalReceitas: number;
   totalDespesas: number;
   saldo: number;
+  totalInvestido: number;
   despesasPorCategoria: TotalPorCategoria[];
   receitasPorCategoria: TotalPorCategoria[];
 };
@@ -22,4 +23,5 @@ export type DashboardEvolucao = {
   ano: number;
   receitas: TotalPorMes[];
   despesas: TotalPorMes[];
+  investimentos: TotalPorMes[];
 };

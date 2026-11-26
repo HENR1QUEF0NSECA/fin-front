@@ -7,6 +7,7 @@ export type MonthlyPoint = {
   label: string;
   receita: number;
   despesa: number;
+  investimento: number;
 };
 
 export type FlowPoint = MonthlyPoint & { economia: number };
@@ -25,6 +26,7 @@ export function toMonthlySeries(evolucao: DashboardEvolucao): MonthlyPoint[] {
       label: `${label}/${String(evolucao.ano).slice(-2)}`,
       receita: evolucao.receitas.find((r) => r.mes === mes)?.total ?? 0,
       despesa: evolucao.despesas.find((d) => d.mes === mes)?.total ?? 0,
+      investimento: evolucao.investimentos.find((i) => i.mes === mes)?.total ?? 0,
     };
   });
 }

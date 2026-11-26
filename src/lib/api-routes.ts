@@ -25,4 +25,9 @@ export const API_ROUTES = {
     update: (id: number) => `/orcamentos/${id}`,
     delete: (id: number) => `/orcamentos/${id}`,
   },
+  investments: {
+    list: "/investimentos",
+    create: "/investimentos",
+    delete: (id: number) => `/investimentos/${id}`,
+  },
 } as const;

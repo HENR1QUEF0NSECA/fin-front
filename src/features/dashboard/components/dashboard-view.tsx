@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowDownCircle, ArrowUpCircle, PiggyBank, Wallet } from "lucide-react";
+import { ArrowDownCircle, ArrowUpCircle, PiggyBank, TrendingUp, Wallet } from "lucide-react";
 import { useMemo } from "react";
 
 import { PageHeader } from "@/components/layout/page-header";
@@ -23,7 +23,7 @@ export function DashboardView() {
   const evolucao = useDashboardEvolucao(ano);
   const transactions = useTransactions();
 
-  const summary = resumo.data ?? { totalReceitas: 0, totalDespesas: 0, saldo: 0 };
+  const summary = resumo.data ?? { totalReceitas: 0, totalDespesas: 0, saldo: 0, totalInvestido: 0 };
 
   const monthly = useMemo(
     () =>
@@ -57,7 +57,7 @@ export function DashboardView() {
         description={`Bem-vindo ao seu controle financeiro · ${formatLongDate(now)}`}
       />
 
-      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <StatCard
           label="Receita"
           value={resumo.isLoading ? null : summary.totalReceitas}
@@ -75,6 +75,14 @@ export function DashboardView() {
           isLoading={resumo.isLoading}
         />
         <StatCard
+          label="Investido"
+          value={resumo.isLoading ? null : summary.totalInvestido}
+          icon={TrendingUp}
+          tone="info"
+          hint="Neste mês"
+          isLoading={resumo.isLoading}
+        />
+        <StatCard
           label="Economia"
           value={resumo.isLoading ? null : economia}
           icon={PiggyBank}
@@ -82,14 +90,16 @@ export function DashboardView() {
           hint="Quanto sobrou neste mês"
           isLoading={resumo.isLoading}
         />
-        <StatCard
-          label="Saldo Total"
-          value={transactions.isLoading ? null : saldoTotal}
-          icon={Wallet}
-          tone="primary"
-          hint="Todas as transações"
-          isLoading={transactions.isLoading}
-        />
+        <div className="sm:col-span-2">
+          <StatCard
+            label="Saldo Total"
+            value={transactions.isLoading ? null : saldoTotal}
+            icon={Wallet}
+            tone="primary"
+            hint="Todas as transações"
+            isLoading={transactions.isLoading}
+          />
+        </div>
       </section>
 
       <section className="grid gap-4 lg:grid-cols-2">

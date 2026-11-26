@@ -1,6 +1,6 @@
 "use client";
 
-import { BarChart3, LayoutDashboard, PiggyBank, Wallet } from "lucide-react";
+import { BarChart3, LayoutDashboard, PiggyBank, TrendingUp, Wallet } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ComponentType, SVGProps } from "react";
@@ -18,6 +18,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/transacoes", label: "Transações", icon: Wallet },
   { href: "/relatorios", label: "Relatórios", icon: BarChart3 },
   { href: "/orcamentos", label: "Orçamentos", icon: PiggyBank },
+  { href: "/investimentos", label: "Investimentos", icon: TrendingUp },
 ];
 
 export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
