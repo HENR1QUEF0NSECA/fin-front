@@ -1,3 +1,10 @@
+export type BudgetPriority = "ESSENCIAL" | "FACULTATIVO";
+
+export const PRIORITY_LABELS: Record<BudgetPriority, string> = {
+  ESSENCIAL: "Essencial",
+  FACULTATIVO: "Facultativo",
+};
+
 export type Budget = {
   id: number;
   categoriaId: number;
@@ -5,6 +12,7 @@ export type Budget = {
   mes: number;
   ano: number;
   limite: number;
+  prioridade: BudgetPriority;
   consumido: number;
 };
 
@@ -13,4 +21,5 @@ export type BudgetInput = {
   mes: number;
   ano: number;
   limite: number;
+  prioridade: BudgetPriority;
 };

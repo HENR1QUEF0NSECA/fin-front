@@ -9,7 +9,7 @@ import { Progress } from "@/components/ui/progress";
 import { formatCurrency, MONTH_SHORT_LABELS } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
-import type { Budget } from "../types";
+import { PRIORITY_LABELS, type Budget } from "../types";
 
 type BudgetCardProps = {
   budget: Budget;
@@ -58,6 +58,9 @@ export function BudgetCard({
             <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
               <h3 className="max-w-full truncate font-semibold">{categoryName}</h3>
               {statusBadge}
+              <Badge tone={budget.prioridade === "ESSENCIAL" ? "info" : "neutral"}>
+                {PRIORITY_LABELS[budget.prioridade]}
+              </Badge>
             </div>
             <p className="text-xs text-muted-foreground">
               {monthLabel}/{budget.ano} · Orçamento mensal

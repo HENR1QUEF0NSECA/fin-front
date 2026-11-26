@@ -18,6 +18,9 @@ export const budgetFormSchema = z.object({
   limite: z
     .number({ error: "Informe o limite" })
     .positive("O limite deve ser maior que zero"),
+  prioridade: z.enum(["ESSENCIAL", "FACULTATIVO"], {
+    error: "Selecione a prioridade",
+  }),
 });
 
 export type BudgetFormValues = z.infer<typeof budgetFormSchema>;

@@ -16,7 +16,7 @@ import {
   budgetFormSchema,
   type BudgetFormValues,
 } from "@/features/budgets/schemas";
-import type { Budget } from "@/features/budgets/types";
+import { PRIORITY_LABELS, type Budget } from "@/features/budgets/types";
 import { ApiError } from "@/lib/api-fetch";
 
 const MONTH_OPTIONS = [
@@ -47,6 +47,7 @@ function getFormValues(budget?: Budget | null): Partial<BudgetFormValues> {
       mes: budget.mes,
       ano: budget.ano,
       limite: budget.limite,
+      prioridade: budget.prioridade,
     };
   }
   const now = new Date();
@@ -54,6 +55,7 @@ function getFormValues(budget?: Budget | null): Partial<BudgetFormValues> {
     categoriaId: 0,
     mes: now.getMonth() + 1,
     ano: now.getFullYear(),
+    prioridade: "ESSENCIAL",
   };
 }
 
@@ -100,7 +102,7 @@ export function BudgetFormDialog({ open, budget, onClose }: BudgetFormDialogProp
       title={isEditing ? "Editar Orçamento" : "Novo Orçamento"}
       description={
         isEditing
-          ? "Altere a categoria, o mês ou o limite deste orçamento."
+          ? "Altere a categoria, o mês, o limite ou a prioridade deste orçamento."
           : "Defina um limite de gastos por categoria e mês."
       }
     >
@@ -164,6 +166,15 @@ export function BudgetFormDialog({ open, budget, onClose }: BudgetFormDialogProp
               {...p}
               {...register("limite", { valueAsNumber: true })}
             />
+          )}
+        </FormField>
+
+        <FormField label="Prioridade" error={errors.prioridade?.message}>
+          {(p) => (
+            <Select {...p} {...register("prioridade")}>
+              <option value="ESSENCIAL">{PRIORITY_LABELS.ESSENCIAL}</option>
+              <option value="FACULTATIVO">{PRIORITY_LABELS.FACULTATIVO}</option>
+            </Select>
           )}
         </FormField>
 
