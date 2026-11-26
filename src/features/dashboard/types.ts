@@ -1,22 +1,25 @@
-export type ResumoCategoria = {
-  nome: string;
+export type TotalPorCategoria = {
+  categoria: string;
   total: number;
 };
 
 export type DashboardResumo = {
+  mes: number;
+  ano: number;
   totalReceitas: number;
   totalDespesas: number;
   saldo: number;
-  categorias: ResumoCategoria[];
+  despesasPorCategoria: TotalPorCategoria[];
+  receitasPorCategoria: TotalPorCategoria[];
 };
 
-export type EvolucaoMes = {
+export type TotalPorMes = {
   mes: number;
-  receitas: number;
-  despesas: number;
+  total: number;
 };
 
 export type DashboardEvolucao = {
   ano: number;
-  meses: EvolucaoMes[];
+  receitas: TotalPorMes[];
+  despesas: TotalPorMes[];
 };

@@ -31,10 +31,7 @@ export const MONTH_SHORT_LABELS = [
   "Dez",
 ] as const;
 
-export const PRIVACY_PLACEHOLDER = "R$ ••••••";
-
-export function formatCurrency(value: number, isPrivate = false): string {
-  if (isPrivate) return PRIVACY_PLACEHOLDER;
+export function formatCurrency(value: number): string {
   return currencyFormatter.format(value);
 }
 

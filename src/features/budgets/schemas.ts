@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const budgetFormSchema = z.object({
-  idCategoria: z
+  categoriaId: z
     .number({ error: "Selecione uma categoria" })
     .int()
     .positive("Selecione uma categoria"),

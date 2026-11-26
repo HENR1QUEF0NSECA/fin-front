@@ -21,12 +21,12 @@ export function TypeToggle({ value, onChange, disabled }: TypeToggleProps) {
       <button
         type="button"
         role="radio"
-        aria-checked={value === "RECEITA"}
+        aria-checked={value === "R"}
         disabled={disabled}
-        onClick={() => onChange("RECEITA")}
+        onClick={() => onChange("R")}
         className={cn(
           "flex items-center justify-center gap-2 rounded px-3 py-2 text-sm font-medium transition-colors",
-          value === "RECEITA"
+          value === "R"
             ? "bg-success text-white shadow-sm"
             : "text-muted-foreground hover:text-foreground",
         )}
@@ -37,12 +37,12 @@ export function TypeToggle({ value, onChange, disabled }: TypeToggleProps) {
       <button
         type="button"
         role="radio"
-        aria-checked={value === "DESPESA"}
+        aria-checked={value === "D"}
         disabled={disabled}
-        onClick={() => onChange("DESPESA")}
+        onClick={() => onChange("D")}
         className={cn(
           "flex items-center justify-center gap-2 rounded px-3 py-2 text-sm font-medium transition-colors",
-          value === "DESPESA"
+          value === "D"
             ? "bg-danger text-white shadow-sm"
             : "text-muted-foreground hover:text-foreground",
         )}

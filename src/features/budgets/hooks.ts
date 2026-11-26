@@ -25,7 +25,7 @@ export function useCreateBudget() {
 export function useUpdateBudget() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, input }: { id: number | string; input: BudgetInput }) =>
+    mutationFn: ({ id, input }: { id: number; input: BudgetInput }) =>
       updateBudget(id, input),
     onSuccess: () => qc.invalidateQueries({ queryKey: budgetsKey }),
   });
@@ -34,7 +34,7 @@ export function useUpdateBudget() {
 export function useDeleteBudget() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (id: number | string) => deleteBudget(id),
+    mutationFn: (id: number) => deleteBudget(id),
     onSuccess: () => qc.invalidateQueries({ queryKey: budgetsKey }),
   });
 }

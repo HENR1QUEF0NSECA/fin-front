@@ -1,72 +1,20 @@
 import { apiFetch } from "@/lib/api-fetch";
-import { BACKEND_ROUTES } from "@/lib/api-routes";
-import { asNumber, asString, isRecord } from "@/lib/parse";
+import { API_ROUTES } from "@/lib/api-routes";
 
 import type { Budget, BudgetInput } from "./types";
 
-function normalizeBudget(raw: unknown): Budget | null {
-  if (!isRecord(raw)) return null;
-
-  const id = asNumber(raw.id);
-  const idCategoria = asNumber(raw.categoriaId);
-  const mes = asNumber(raw.mes);
-  const ano = asNumber(raw.ano);
-  const limite = asNumber(raw.limite);
-
-  if (id === null || idCategoria === null || mes === null || ano === null || limite === null) {
-    return null;
-  }
-
-  return {
-    id,
-    idCategoria,
-    nomeCategoria: asString(raw.nomeCategoria),
-    mes,
-    ano,
-    limite,
-    gasto: asNumber(raw.consumido) ?? 0,
-  };
+export function listBudgets(): Promise<Budget[]> {
+  return apiFetch<Budget[]>(API_ROUTES.budgets.list);
 }
 
-export async function listBudgets(): Promise<Budget[]> {
-  const data = await apiFetch<unknown>(BACKEND_ROUTES.budgets.list);
-  if (!Array.isArray(data)) return [];
-  return data.map(normalizeBudget).filter((b): b is Budget => b !== null);
+export function createBudget(input: BudgetInput): Promise<Budget> {
+  return apiFetch<Budget>(API_ROUTES.budgets.create, { method: "POST", body: input });
 }
 
-function toBackendBody(input: BudgetInput) {
-  return {
-    categoriaId: input.idCategoria,
-    mes: input.mes,
-    ano: input.ano,
-    limite: input.limite,
-  };
+export function updateBudget(id: number, input: BudgetInput): Promise<Budget> {
+  return apiFetch<Budget>(API_ROUTES.budgets.update(id), { method: "PUT", body: input });
 }
 
-function toSavedBudget(raw: unknown): Budget {
-  const normalized = normalizeBudget(raw);
-  if (!normalized) throw new Error("Resposta do servidor em formato inesperado");
-  return normalized;
-}
-
-export async function createBudget(input: BudgetInput): Promise<Budget> {
-  const raw = await apiFetch<unknown>(BACKEND_ROUTES.budgets.create, {
-    method: "POST",
-    body: toBackendBody(input),
-  });
-  return toSavedBudget(raw);
-}
-
-export async function updateBudget(id: number | string, input: BudgetInput): Promise<Budget> {
-  const raw = await apiFetch<unknown>(BACKEND_ROUTES.budgets.update(id), {
-    method: "PUT",
-    body: toBackendBody(input),
-  });
-  return toSavedBudget(raw);
-}
-
-export async function deleteBudget(id: number | string): Promise<void> {
-  await apiFetch<unknown>(BACKEND_ROUTES.budgets.delete(id), {
-    method: "DELETE",
-  });
+export function deleteBudget(id: number): Promise<void> {
+  return apiFetch<void>(API_ROUTES.budgets.delete(id), { method: "DELETE" });
 }

@@ -5,7 +5,6 @@ import { useMemo, useState } from "react";
 
 import { PageHeader } from "@/components/layout/page-header";
 import { Button } from "@/components/ui/button";
-import { useCategories } from "@/features/categories/hooks";
 import { useTransactions } from "@/features/transactions/hooks";
 import type {
   Transaction,
@@ -20,15 +19,11 @@ import { TransactionList } from "./transaction-list";
 const INITIAL_FILTERS: TransactionFilters = {
   descricao: "",
   tipo: "TODOS",
-  idCategoria: "TODAS",
+  categoriaId: "TODAS",
 };
 
 function hasActive(filters: TransactionFilters): boolean {
-  return (
-    Boolean(filters.descricao?.trim()) ||
-    (filters.tipo !== undefined && filters.tipo !== "TODOS") ||
-    (filters.idCategoria !== undefined && filters.idCategoria !== "TODAS")
-  );
+  return filters.descricao.trim() !== "" || filters.tipo !== "TODOS" || filters.categoriaId !== "TODAS";
 }
 
 export function TransactionsView() {
@@ -41,26 +36,15 @@ export function TransactionsView() {
   const [alert, setAlert] = useState<string | null>(null);
 
   const query = useTransactions();
-  const categories = useCategories();
 
   const items = useMemo(() => {
-    let list = query.data ?? [];
-
-    if (filters.tipo === "RECEITA") list = list.filter((t) => t.tipo === "R");
-    else if (filters.tipo === "DESPESA") list = list.filter((t) => t.tipo === "D");
-
-    if (
-      filters.idCategoria !== undefined &&
-      filters.idCategoria !== "TODAS"
-    ) {
-      list = list.filter((t) => t.idCategoria === filters.idCategoria);
-    }
-
-    const term = filters.descricao?.trim().toLowerCase();
-    if (term) {
-      list = list.filter((t) => t.descricao.toLowerCase().includes(term));
-    }
-    return list;
+    const term = filters.descricao.trim().toLowerCase();
+    return (query.data ?? []).filter(
+      (t) =>
+        (filters.tipo === "TODOS" || t.tipo === filters.tipo) &&
+        (filters.categoriaId === "TODAS" || t.categoriaId === filters.categoriaId) &&
+        (t.descricao ?? "").toLowerCase().includes(term),
+    );
   }, [query.data, filters]);
 
   return (
@@ -98,7 +82,6 @@ export function TransactionsView() {
 
       <TransactionList
         data={items}
-        categories={categories.data}
         isLoading={query.isLoading}
         error={query.error as Error | null}
         hasActiveFilters={hasActive(filters)}

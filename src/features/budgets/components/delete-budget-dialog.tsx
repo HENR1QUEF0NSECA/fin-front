@@ -12,13 +12,11 @@ import type { Budget } from "../types";
 
 type DeleteBudgetDialogProps = {
   budget: Budget | null;
-  categoryName?: string;
   onClose: () => void;
 };
 
 export function DeleteBudgetDialog({
   budget,
-  categoryName,
   onClose,
 }: DeleteBudgetDialogProps) {
   const remove = useDeleteBudget();
@@ -39,7 +37,7 @@ export function DeleteBudgetDialog({
     <Dialog open={budget !== null} onClose={onClose} title="Excluir Orçamento" size="sm">
       <p className="text-sm text-muted-foreground">
         Tem certeza que deseja excluir o orçamento
-        {categoryName ? ` de "${categoryName}"` : ""}?{" "}
+        {budget ? ` de "${budget.nomeCategoria}"` : ""}?{" "}
         <span className="text-foreground">Esta operação não pode ser desfeita.</span>
       </p>
       {error ? (

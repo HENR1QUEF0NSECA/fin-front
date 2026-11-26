@@ -11,30 +11,16 @@ import {
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getCategoryIcon } from "@/features/transactions/category-icons";
-import {
-  buildCategoryMap,
-  getCategoryName,
-} from "@/features/transactions/category-lookup";
 import type { Transaction } from "@/features/transactions/types";
-import type { Category } from "@/features/categories/types";
 import { formatCurrency, formatDate } from "@/lib/format";
 import { cn } from "@/lib/utils";
-import { usePrivacy } from "@/providers/privacy-provider";
 
 type RecentActivityProps = {
   data: Transaction[];
-  categories?: Category[];
   isLoading?: boolean;
 };
 
-export function RecentActivity({
-  data,
-  categories,
-  isLoading,
-}: RecentActivityProps) {
-  const { isPrivate } = usePrivacy();
-  const categoryMap = buildCategoryMap(categories ?? []);
-
+export function RecentActivity({ data, isLoading }: RecentActivityProps) {
   return (
     <Card>
       <CardHeader>
@@ -56,8 +42,7 @@ export function RecentActivity({
         ) : (
           <ul className="divide-y divide-border">
             {data.map((t) => {
-              const categoryName = getCategoryName(t, categoryMap);
-              const Icon = getCategoryIcon(categoryName);
+              const Icon = getCategoryIcon(t.nomeCategoria);
               const isReceita = t.tipo === "R";
               return (
                 <li
@@ -74,10 +59,9 @@ export function RecentActivity({
                     <Icon className="h-4 w-4" />
                   </span>
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium">{t.descricao}</p>
+                    <p className="truncate text-sm font-medium">{t.descricao ?? t.nomeCategoria}</p>
                     <p className="text-xs text-muted-foreground">
-                      {categoryName}
-                      {t.data ? ` · ${formatDate(t.data)}` : ""}
+                      {t.nomeCategoria} · {formatDate(t.dataHoraTransacao)}
                     </p>
                   </div>
                   <span
@@ -86,7 +70,7 @@ export function RecentActivity({
                       isReceita ? "text-success" : "text-danger",
                     )}
                   >
-                    {isReceita ? "+" : "−"} {formatCurrency(t.valor, isPrivate)}
+                    {isReceita ? "+" : "−"} {formatCurrency(t.valor)}
                   </span>
                 </li>
               );

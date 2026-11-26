@@ -8,26 +8,22 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { formatCurrency, MONTH_SHORT_LABELS } from "@/lib/format";
 import { cn } from "@/lib/utils";
-import { usePrivacy } from "@/providers/privacy-provider";
 
 import type { Budget } from "../types";
 
 type BudgetCardProps = {
   budget: Budget;
-  categoryName: string;
-  spent: number;
   onRequestEdit: (budget: Budget) => void;
   onRequestDelete: (budget: Budget) => void;
 };
 
 export function BudgetCard({
   budget,
-  categoryName,
-  spent,
   onRequestEdit,
   onRequestDelete,
 }: BudgetCardProps) {
-  const { isPrivate } = usePrivacy();
+  const spent = budget.consumido;
+  const categoryName = budget.nomeCategoria;
 
   const limit = Math.max(budget.limite, 0.0001);
   const pct = (spent / limit) * 100;
@@ -92,8 +88,8 @@ export function BudgetCard({
         <div className="space-y-2">
           <div className="flex items-baseline justify-between gap-2">
             <span className="text-sm tabular-nums">
-              <span className="font-semibold">{formatCurrency(spent, isPrivate)}</span>
-              <span className="text-muted-foreground"> / {formatCurrency(budget.limite, isPrivate)}</span>
+              <span className="font-semibold">{formatCurrency(spent)}</span>
+              <span className="text-muted-foreground"> / {formatCurrency(budget.limite)}</span>
             </span>
             <span
               className={cn(
@@ -111,7 +107,7 @@ export function BudgetCard({
           />
           {isOver ? (
             <p className="text-xs text-danger">
-              Excedeu em {formatCurrency(spent - budget.limite, isPrivate)}.
+              Excedeu em {formatCurrency(spent - budget.limite)}.
             </p>
           ) : null}
         </div>

@@ -9,8 +9,9 @@ import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
-import { AuthApiError, register as registerUser } from "@/features/auth/services";
+import { register as registerUser } from "@/features/auth/services";
 import { registerSchema, type RegisterFormValues } from "@/features/auth/schemas";
+import { ApiError } from "@/lib/api-fetch";
 
 export function RegisterForm() {
   const router = useRouter();
@@ -32,7 +33,7 @@ export function RegisterForm() {
       router.replace("/login?registered=1");
     } catch (error) {
       const message =
-        error instanceof AuthApiError ? error.message : "Não foi possível criar a conta.";
+        error instanceof ApiError ? error.message : "Não foi possível criar a conta.";
       setFormError(message);
     }
   }

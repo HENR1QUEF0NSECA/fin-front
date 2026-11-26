@@ -67,5 +67,5 @@ Para começar do zero, clique em **Criar conta**, cadastre-se e entre. As catego
 O front procura a API em `http://localhost:8080/api`. Para usar outro endereço, crie um arquivo `.env.local` na pasta `fin-front`:
 
 ```env
-BACKEND_URL=http://localhost:8080/api
+NEXT_PUBLIC_API_URL=http://localhost:8080/api
 ```

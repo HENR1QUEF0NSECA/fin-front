@@ -6,7 +6,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatCurrency } from "@/lib/format";
 import { cn } from "@/lib/utils";
-import { usePrivacy } from "@/providers/privacy-provider";
 
 type Tone = "primary" | "success" | "danger" | "info";
 
@@ -34,7 +33,6 @@ export function StatCard({
   tone = "primary",
   isLoading,
 }: StatCardProps) {
-  const { isPrivate } = usePrivacy();
   const styles = toneStyles[tone];
 
   return (
@@ -49,7 +47,7 @@ export function StatCard({
             <Skeleton className="mt-2 h-6 w-28" />
           ) : (
             <p className={cn("mt-1 text-xl font-semibold tabular-nums sm:text-2xl", styles.value)}>
-              {formatCurrency(value, isPrivate)}
+              {formatCurrency(value)}
             </p>
           )}
           {hint ? (

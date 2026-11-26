@@ -8,11 +8,6 @@ import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useBudgets } from "@/features/budgets/hooks";
-import { useCategories } from "@/features/categories/hooks";
-import {
-  buildCategoryMap,
-  getCategoryName,
-} from "@/features/transactions/category-lookup";
 
 import type { Budget } from "../types";
 import { BudgetCard } from "./budget-card";
@@ -21,7 +16,6 @@ import { DeleteBudgetDialog } from "./delete-budget-dialog";
 
 export function BudgetsView() {
   const budgets = useBudgets();
-  const categories = useCategories();
 
   const [form, setForm] = useState<{ open: boolean; budget: Budget | null }>({
     open: false,
@@ -30,11 +24,6 @@ export function BudgetsView() {
   const openNew = () => setForm({ open: true, budget: null });
   const [toDelete, setToDelete] = useState<Budget | null>(null);
 
-  const categoryMap = useMemo(
-    () => buildCategoryMap(categories.data ?? []),
-    [categories.data],
-  );
-
   const items = useMemo(() => {
     const list = budgets.data ?? [];
     return [...list].sort((a, b) => {
@@ -42,8 +31,6 @@ export function BudgetsView() {
       return b.mes - a.mes;
     });
   }, [budgets.data]);
-
-  const deletingName = toDelete ? getCategoryName(toDelete, categoryMap) : undefined;
 
   return (
     <>
@@ -93,8 +80,6 @@ export function BudgetsView() {
             <BudgetCard
               key={b.id}
               budget={b}
-              categoryName={getCategoryName(b, categoryMap)}
-              spent={b.gasto}
               onRequestEdit={(budget) => setForm({ open: true, budget })}
               onRequestDelete={setToDelete}
             />
@@ -109,7 +94,6 @@ export function BudgetsView() {
       />
       <DeleteBudgetDialog
         budget={toDelete}
-        categoryName={deletingName}
         onClose={() => setToDelete(null)}
       />
     </>

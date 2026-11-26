@@ -10,8 +10,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { usePrivacy } from "@/providers/privacy-provider";
-import { cn } from "@/lib/utils";
 
 type ChartShellProps = {
   title: string;
@@ -34,7 +32,6 @@ export function ChartShell({
   className,
   children,
 }: ChartShellProps) {
-  const { isPrivate } = usePrivacy();
   return (
     <Card className={className}>
       <CardHeader>
@@ -50,15 +47,8 @@ export function ChartShell({
               {emptyMessage}
             </div>
           ) : (
-            <div className={cn("h-full w-full", isPrivate && "blur-sm select-none")}>
-              {children}
-            </div>
+            <div className="h-full w-full">{children}</div>
           )}
-          {isPrivate && !isLoading && !isEmpty ? (
-            <span className="pointer-events-none absolute right-2 top-2 rounded-md bg-foreground/80 px-2 py-1 text-xs font-medium uppercase tracking-wide text-background">
-              Modo privado
-            </span>
-          ) : null}
         </div>
       </CardContent>
     </Card>

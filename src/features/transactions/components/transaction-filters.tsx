@@ -26,7 +26,7 @@ export function TransactionFiltersBar({ value, onChange }: TransactionFiltersPro
           type="search"
           placeholder="Buscar por descrição..."
           aria-label="Buscar por descrição"
-          value={value.descricao ?? ""}
+          value={value.descricao}
           onChange={(e) => onChange({ ...value, descricao: e.target.value })}
           className="pl-9"
         />
@@ -34,7 +34,7 @@ export function TransactionFiltersBar({ value, onChange }: TransactionFiltersPro
 
       <Select
         aria-label="Filtrar por tipo"
-        value={value.tipo ?? "TODOS"}
+        value={value.tipo}
         onChange={(e) =>
           onChange({
             ...value,
@@ -43,18 +43,17 @@ export function TransactionFiltersBar({ value, onChange }: TransactionFiltersPro
         }
       >
         <option value="TODOS">Todos os tipos</option>
-        <option value="RECEITA">Receita</option>
-        <option value="DESPESA">Despesa</option>
+        <option value="R">Receita</option>
+        <option value="D">Despesa</option>
       </Select>
 
       <Select
         aria-label="Filtrar por categoria"
-        value={value.idCategoria === undefined ? "TODAS" : String(value.idCategoria)}
+        value={String(value.categoriaId)}
         onChange={(e) =>
           onChange({
             ...value,
-            idCategoria:
-              e.target.value === "TODAS" ? "TODAS" : Number(e.target.value),
+            categoriaId: e.target.value === "TODAS" ? "TODAS" : Number(e.target.value),
           })
         }
         disabled={categories.isLoading}

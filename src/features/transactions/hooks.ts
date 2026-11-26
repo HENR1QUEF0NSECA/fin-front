@@ -38,7 +38,7 @@ export function useCreateTransaction() {
 export function useUpdateTransaction() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, input }: { id: number | string; input: TransactionInput }) =>
+    mutationFn: ({ id, input }: { id: number; input: TransactionInput }) =>
       updateTransaction(id, input),
     onSuccess: () => invalidateAfterTransactionChange(qc),
   });
@@ -47,7 +47,7 @@ export function useUpdateTransaction() {
 export function useDeleteTransaction() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (id: number | string) => deleteTransaction(id),
+    mutationFn: (id: number) => deleteTransaction(id),
     onSuccess: () => invalidateAfterTransactionChange(qc),
   });
 }

@@ -1,4 +1,4 @@
-export const BACKEND_ROUTES = {
+export const API_ROUTES = {
   auth: {
     login: "/auth/login",
     register: "/auth/registro",
@@ -12,8 +12,8 @@ export const BACKEND_ROUTES = {
   transactions: {
     list: "/transacoes",
     create: "/transacoes",
-    update: (id: string | number) => `/transacoes/${id}`,
-    delete: (id: string | number) => `/transacoes/${id}`,
+    update: (id: number) => `/transacoes/${id}`,
+    delete: (id: number) => `/transacoes/${id}`,
   },
   dashboard: {
     resumo: "/transacoes/dashboard/resumo",
@@ -22,16 +22,7 @@ export const BACKEND_ROUTES = {
   budgets: {
     list: "/orcamentos",
     create: "/orcamentos",
-    update: (id: string | number) => `/orcamentos/${id}`,
-    delete: (id: string | number) => `/orcamentos/${id}`,
+    update: (id: number) => `/orcamentos/${id}`,
+    delete: (id: number) => `/orcamentos/${id}`,
   },
-} as const;
-
-export const BFF_ROUTES = {
-  auth: {
-    login: "/api/auth/login",
-    register: "/api/auth/register",
-    logout: "/api/auth/logout",
-  },
-  backend: (path: string) => `/api/backend/${path.replace(/^\//, "")}`,
 } as const;

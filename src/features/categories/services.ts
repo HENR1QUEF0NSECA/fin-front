@@ -1,20 +1,8 @@
 import { apiFetch } from "@/lib/api-fetch";
-import { BACKEND_ROUTES } from "@/lib/api-routes";
-import { asNumber, asString, isRecord } from "@/lib/parse";
+import { API_ROUTES } from "@/lib/api-routes";
 
 import type { Category } from "./types";
 
-function normalize(payload: unknown): Category[] {
-  if (!Array.isArray(payload)) return [];
-  return payload.flatMap((entry) => {
-    if (!isRecord(entry)) return [];
-    const id = asNumber(entry.id);
-    const nome = asString(entry.nome);
-    return id !== null && nome ? [{ id, nome }] : [];
-  });
-}
-
-export async function listCategories(): Promise<Category[]> {
-  const raw = await apiFetch<unknown>(BACKEND_ROUTES.categories.list);
-  return normalize(raw);
+export function listCategories(): Promise<Category[]> {
+  return apiFetch<Category[]>(API_ROUTES.categories.list);
 }

@@ -2,6 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -9,8 +10,9 @@ import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
-import { AuthApiError, login } from "@/features/auth/services";
+import { login } from "@/features/auth/services";
 import { loginSchema, type LoginFormValues } from "@/features/auth/schemas";
+import { ApiError } from "@/lib/api-fetch";
 
 function safeNextPath(next: string | null): string {
   const fallback = "/painel";
@@ -26,6 +28,7 @@ function safeNextPath(next: string | null): string {
 
 export function LoginForm() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const searchParams = useSearchParams();
   const [formError, setFormError] = useState<string | null>(null);
 
@@ -42,11 +45,11 @@ export function LoginForm() {
     setFormError(null);
     try {
       await login(values);
+      queryClient.clear();
       router.replace(safeNextPath(searchParams.get("next")));
-      router.refresh();
     } catch (error) {
       const message =
-        error instanceof AuthApiError ? error.message : "Não foi possível fazer login.";
+        error instanceof ApiError ? error.message : "Não foi possível fazer login.";
       setFormError(message);
     }
   }

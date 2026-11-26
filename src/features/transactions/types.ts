@@ -1,31 +1,26 @@
-export type TransactionType = "RECEITA" | "DESPESA";
-
-export type BackendTransactionType = "D" | "R";
+export type TransactionType = "R" | "D";
 
 export type Transaction = {
   id: number;
-  tipo: BackendTransactionType;
+  tipo: TransactionType;
   valor: number;
-  idCategoria: number;
-  nomeCategoria?: string;
-  descricao: string;
-  data?: string;
-};
-
-export type TransactionFilters = {
-  descricao?: string;
-  tipo?: TransactionType | "TODOS";
-  idCategoria?: number | "TODAS";
+  categoriaId: number;
+  nomeCategoria: string;
+  descricao: string | null;
+  dataHoraTransacao: string;
+  alertaOrcamento?: boolean;
 };
 
 export type TransactionInput = {
   tipo: TransactionType;
   valor: number;
-  idCategoria: number;
+  categoriaId: number;
   descricao: string;
   data: string;
 };
 
-export type SavedTransaction = Transaction & {
-  alertaOrcamento?: boolean;
+export type TransactionFilters = {
+  descricao: string;
+  tipo: TransactionType | "TODOS";
+  categoriaId: number | "TODAS";
 };

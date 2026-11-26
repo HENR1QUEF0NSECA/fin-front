@@ -6,18 +6,14 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { Category } from "@/features/categories/types";
-import { usePrivacy } from "@/providers/privacy-provider";
 import { formatCurrency, formatDate } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 import { getCategoryIcon } from "../category-icons";
-import { buildCategoryMap, getCategoryName } from "../category-lookup";
 import type { Transaction } from "../types";
 
 type TransactionListProps = {
   data?: Transaction[];
-  categories?: Category[];
   isLoading: boolean;
   error?: Error | null;
   hasActiveFilters?: boolean;
@@ -29,7 +25,6 @@ type TransactionListProps = {
 
 export function TransactionList({
   data,
-  categories,
   isLoading,
   error,
   hasActiveFilters,
@@ -38,9 +33,6 @@ export function TransactionList({
   onRetry,
   onClearFilters,
 }: TransactionListProps) {
-  const { isPrivate } = usePrivacy();
-  const categoryMap = buildCategoryMap(categories ?? []);
-
   if (isLoading) {
     return (
       <div className="space-y-2" aria-busy="true">
@@ -97,8 +89,7 @@ export function TransactionList({
   return (
     <Card className="divide-y divide-border">
       {data.map((t) => {
-        const categoryName = getCategoryName(t, categoryMap);
-        const Icon = getCategoryIcon(categoryName);
+        const Icon = getCategoryIcon(t.nomeCategoria);
         const isReceita = t.tipo === "R";
         return (
           <div key={t.id} className="flex items-center gap-4 px-5 py-4">
@@ -112,10 +103,9 @@ export function TransactionList({
               <Icon className="h-5 w-5" />
             </span>
             <div className="min-w-0 flex-1">
-              <p className="truncate font-medium">{t.descricao}</p>
+              <p className="truncate font-medium">{t.descricao ?? t.nomeCategoria}</p>
               <p className="text-xs text-muted-foreground">
-                {categoryName}
-                {t.data ? ` · ${formatDate(t.data)}` : ""}
+                {t.nomeCategoria} · {formatDate(t.dataHoraTransacao)}
               </p>
             </div>
             <p
@@ -124,13 +114,13 @@ export function TransactionList({
                 isReceita ? "text-success" : "text-danger",
               )}
             >
-              {isReceita ? "+" : "−"} {formatCurrency(t.valor, isPrivate)}
+              {isReceita ? "+" : "−"} {formatCurrency(t.valor)}
             </p>
             <div className="flex shrink-0 items-center">
               <Button
                 variant="ghost"
                 size="icon"
-                aria-label={`Editar ${t.descricao}`}
+                aria-label={`Editar ${t.descricao ?? t.nomeCategoria}`}
                 onClick={() => onEdit(t)}
                 className="text-muted-foreground hover:text-foreground"
               >
@@ -139,7 +129,7 @@ export function TransactionList({
               <Button
                 variant="ghost"
                 size="icon"
-                aria-label={`Excluir ${t.descricao}`}
+                aria-label={`Excluir ${t.descricao ?? t.nomeCategoria}`}
                 onClick={() => onDelete(t)}
                 className="text-muted-foreground hover:text-danger"
               >

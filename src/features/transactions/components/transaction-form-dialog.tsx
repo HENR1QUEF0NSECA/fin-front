@@ -17,7 +17,7 @@ import {
   transactionFormSchema,
   type TransactionFormValues,
 } from "@/features/transactions/schemas";
-import type { SavedTransaction, Transaction } from "@/features/transactions/types";
+import type { Transaction } from "@/features/transactions/types";
 import { ApiError } from "@/lib/api-fetch";
 import { toIsoDate } from "@/lib/format";
 
@@ -27,24 +27,24 @@ type TransactionFormDialogProps = {
   open: boolean;
   transaction?: Transaction | null;
   onClose: () => void;
-  onSaved?: (response: SavedTransaction) => void;
+  onSaved?: (response: Transaction) => void;
 };
 
 function getFormValues(transaction?: Transaction | null): Partial<TransactionFormValues> {
   if (!transaction) {
     return {
-      tipo: "DESPESA",
-      idCategoria: 0,
+      tipo: "D",
+      categoriaId: 0,
       descricao: "",
       data: toIsoDate(new Date()),
     };
   }
   return {
-    tipo: transaction.tipo === "R" ? "RECEITA" : "DESPESA",
+    tipo: transaction.tipo,
     valor: transaction.valor,
-    idCategoria: transaction.idCategoria,
-    descricao: transaction.descricao,
-    data: transaction.data ? transaction.data.slice(0, 10) : toIsoDate(new Date()),
+    categoriaId: transaction.categoriaId,
+    descricao: transaction.descricao ?? "",
+    data: transaction.dataHoraTransacao.slice(0, 10),
   };
 }
 
@@ -141,14 +141,14 @@ export function TransactionFormDialog({
 
         <FormField
           label="Categoria"
-          error={errors.idCategoria?.message}
+          error={errors.categoriaId?.message}
           hint={categories.isLoading ? "Carregando categorias..." : undefined}
         >
           {(p) => (
             <Select
               disabled={categories.isLoading}
               {...p}
-              {...register("idCategoria", { valueAsNumber: true })}
+              {...register("categoriaId", { valueAsNumber: true })}
             >
               <option value={0}>Selecione...</option>
               {(categories.data ?? []).map((c) => (

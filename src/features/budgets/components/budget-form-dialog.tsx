@@ -43,7 +43,7 @@ type BudgetFormDialogProps = {
 function getFormValues(budget?: Budget | null): Partial<BudgetFormValues> {
   if (budget) {
     return {
-      idCategoria: budget.idCategoria,
+      categoriaId: budget.categoriaId,
       mes: budget.mes,
       ano: budget.ano,
       limite: budget.limite,
@@ -51,7 +51,7 @@ function getFormValues(budget?: Budget | null): Partial<BudgetFormValues> {
   }
   const now = new Date();
   return {
-    idCategoria: 0,
+    categoriaId: 0,
     mes: now.getMonth() + 1,
     ano: now.getFullYear(),
   };
@@ -107,14 +107,14 @@ export function BudgetFormDialog({ open, budget, onClose }: BudgetFormDialogProp
       <form className="space-y-4" onSubmit={handleSubmit(onSubmit)} noValidate>
         <FormField
           label="Categoria"
-          error={errors.idCategoria?.message}
+          error={errors.categoriaId?.message}
           hint={categories.isLoading ? "Carregando categorias..." : undefined}
         >
           {(p) => (
             <Select
               disabled={categories.isLoading}
               {...p}
-              {...register("idCategoria", { valueAsNumber: true })}
+              {...register("categoriaId", { valueAsNumber: true })}
             >
               <option value={0}>Selecione...</option>
               {(categories.data ?? []).map((c) => (

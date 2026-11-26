@@ -1,15 +1,15 @@
 export type Budget = {
   id: number;
-  idCategoria: number;
-  nomeCategoria?: string;
+  categoriaId: number;
+  nomeCategoria: string;
   mes: number;
   ano: number;
   limite: number;
-  gasto: number;
+  consumido: number;
 };
 
 export type BudgetInput = {
-  idCategoria: number;
+  categoriaId: number;
   mes: number;
   ano: number;
   limite: number;

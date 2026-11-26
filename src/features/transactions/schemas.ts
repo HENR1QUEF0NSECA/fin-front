@@ -10,11 +10,11 @@ function isRealDate(value: string): boolean {
 }
 
 export const transactionFormSchema = z.object({
-  tipo: z.enum(["RECEITA", "DESPESA"]),
+  tipo: z.enum(["R", "D"]),
   valor: z
     .number({ error: "Informe um valor" })
     .positive("O valor deve ser maior que zero"),
-  idCategoria: z
+  categoriaId: z
     .number({ error: "Selecione uma categoria" })
     .int()
     .positive("Selecione uma categoria"),

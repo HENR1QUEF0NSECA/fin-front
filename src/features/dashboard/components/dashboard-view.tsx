@@ -4,8 +4,6 @@ import { ArrowDownCircle, ArrowUpCircle, PiggyBank, Wallet } from "lucide-react"
 import { useMemo } from "react";
 
 import { PageHeader } from "@/components/layout/page-header";
-import { PrivacyToggle } from "@/components/layout/privacy-toggle";
-import { useCategories } from "@/features/categories/hooks";
 import { useTransactions } from "@/features/transactions/hooks";
 import { formatLongDate } from "@/lib/format";
 
@@ -16,15 +14,6 @@ import { IncomeExpenseChart } from "./income-expense-chart";
 import { RecentActivity } from "./recent-activity";
 import { StatCard } from "./stat-card";
 
-function sortByDateDesc<T extends { data?: string; id: number | string }>(items: T[]): T[] {
-  return [...items].sort((a, b) => {
-    const da = a.data ?? "";
-    const db = b.data ?? "";
-    if (db !== da) return db.localeCompare(da);
-    return String(b.id).localeCompare(String(a.id));
-  });
-}
-
 export function DashboardView() {
   const now = new Date();
   const mes = now.getMonth() + 1;
@@ -33,14 +22,8 @@ export function DashboardView() {
   const resumo = useDashboardResumo(mes, ano);
   const evolucao = useDashboardEvolucao(ano);
   const transactions = useTransactions();
-  const categories = useCategories();
 
-  const summary = resumo.data ?? {
-    totalReceitas: 0,
-    totalDespesas: 0,
-    saldo: 0,
-    categorias: [],
-  };
+  const summary = resumo.data ?? { totalReceitas: 0, totalDespesas: 0, saldo: 0 };
 
   const monthly = useMemo(
     () =>
@@ -51,14 +34,11 @@ export function DashboardView() {
   );
 
   const categorySlices = useMemo(
-    () => (resumo.data ? toCategorySlices(resumo.data.categorias) : []),
+    () => (resumo.data ? toCategorySlices(resumo.data.despesasPorCategoria) : []),
     [resumo.data],
   );
 
-  const recents = useMemo(
-    () => sortByDateDesc(transactions.data ?? []).slice(0, 5),
-    [transactions.data],
-  );
+  const recents = (transactions.data ?? []).slice(0, 5);
 
   const economia = Math.max(0, summary.saldo);
   const saldoTotal = useMemo(
@@ -75,7 +55,6 @@ export function DashboardView() {
       <PageHeader
         title="Painel"
         description={`Bem-vindo ao seu controle financeiro · ${formatLongDate(now)}`}
-        actions={<PrivacyToggle />}
       />
 
       <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -119,11 +98,7 @@ export function DashboardView() {
       </section>
 
       <section>
-        <RecentActivity
-          data={recents}
-          categories={categories.data}
-          isLoading={transactions.isLoading}
-        />
+        <RecentActivity data={recents} isLoading={transactions.isLoading} />
       </section>
     </>
   );
