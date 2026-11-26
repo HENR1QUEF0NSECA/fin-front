@@ -37,7 +37,13 @@ npm run dev
 
 **4. Use o sistema**
 
-Abra http://localhost:3000, clique em **Criar conta**, cadastre-se e entre. As categorias (Transporte, Lazer, Salário...) já vêm prontas, então dá para lançar receitas e despesas, criar orçamentos e ver o painel na hora.
+Abra http://localhost:3000 e entre com a **conta de demonstração**, que já vem com os últimos 3 meses de receitas, despesas e orçamentos:
+
+| E-mail | Senha |
+|---|---|
+| `demo@finplan.local` | `demo1234` |
+
+Para começar do zero, clique em **Criar conta**, cadastre-se e entre. As categorias (Transporte, Lazer, Salário...) já vêm prontas, então dá para lançar receitas e despesas, criar orçamentos e ver o painel na hora.
 
 ### Parar e rodar de novo
 

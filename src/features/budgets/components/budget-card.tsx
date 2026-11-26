@@ -59,8 +59,8 @@ export function BudgetCard({
             <StatusIcon className="h-5 w-5" />
           </span>
           <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-2">
-              <h3 className="truncate font-semibold">{categoryName}</h3>
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+              <h3 className="max-w-full truncate font-semibold">{categoryName}</h3>
               {statusBadge}
             </div>
             <p className="text-xs text-muted-foreground">
