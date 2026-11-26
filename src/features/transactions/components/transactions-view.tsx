@@ -13,8 +13,8 @@ import type {
 } from "@/features/transactions/types";
 
 import { DeleteTransactionDialog } from "./delete-transaction-dialog";
-import { NewTransactionDialog } from "./new-transaction-dialog";
 import { TransactionFiltersBar } from "./transaction-filters";
+import { TransactionFormDialog } from "./transaction-form-dialog";
 import { TransactionList } from "./transaction-list";
 
 const INITIAL_FILTERS: TransactionFilters = {
@@ -33,7 +33,10 @@ function hasActive(filters: TransactionFilters): boolean {
 
 export function TransactionsView() {
   const [filters, setFilters] = useState<TransactionFilters>(INITIAL_FILTERS);
-  const [newOpen, setNewOpen] = useState(false);
+  const [form, setForm] = useState<{ open: boolean; transaction: Transaction | null }>({
+    open: false,
+    transaction: null,
+  });
   const [toDelete, setToDelete] = useState<Transaction | null>(null);
   const [alert, setAlert] = useState<string | null>(null);
 
@@ -66,7 +69,7 @@ export function TransactionsView() {
         title="Transações"
         description="Cadastre e acompanhe suas receitas e despesas."
         actions={
-          <Button onClick={() => setNewOpen(true)} className="gap-2">
+          <Button onClick={() => setForm({ open: true, transaction: null })} className="gap-2">
             <Plus className="h-4 w-4" aria-hidden />
             Nova Transação
           </Button>
@@ -99,15 +102,17 @@ export function TransactionsView() {
         isLoading={query.isLoading}
         error={query.error as Error | null}
         hasActiveFilters={hasActive(filters)}
+        onEdit={(transaction) => setForm({ open: true, transaction })}
         onDelete={setToDelete}
         onRetry={() => query.refetch()}
         onClearFilters={() => setFilters(INITIAL_FILTERS)}
       />
 
-      <NewTransactionDialog
-        open={newOpen}
-        onClose={() => setNewOpen(false)}
-        onCreated={(res) => {
+      <TransactionFormDialog
+        open={form.open}
+        transaction={form.transaction}
+        onClose={() => setForm((current) => ({ ...current, open: false }))}
+        onSaved={(res) => {
           if (res.alertaOrcamento) {
             setAlert(
               "Atenção: com esta transação, você já usou 80% ou mais do orçamento desta categoria no mês.",

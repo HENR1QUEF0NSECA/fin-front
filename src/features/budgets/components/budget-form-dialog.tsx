@@ -11,11 +11,12 @@ import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { useCategories } from "@/features/categories/hooks";
-import { useCreateBudget } from "@/features/budgets/hooks";
+import { useCreateBudget, useUpdateBudget } from "@/features/budgets/hooks";
 import {
   budgetFormSchema,
   type BudgetFormValues,
 } from "@/features/budgets/schemas";
+import type { Budget } from "@/features/budgets/types";
 import { ApiError } from "@/lib/api-fetch";
 
 const MONTH_OPTIONS = [
@@ -33,12 +34,21 @@ const MONTH_OPTIONS = [
   { value: 12, label: "Dezembro" },
 ];
 
-type NewBudgetDialogProps = {
+type BudgetFormDialogProps = {
   open: boolean;
+  budget?: Budget | null;
   onClose: () => void;
 };
 
-function getDefaultValues(): Partial<BudgetFormValues> {
+function getFormValues(budget?: Budget | null): Partial<BudgetFormValues> {
+  if (budget) {
+    return {
+      idCategoria: budget.idCategoria,
+      mes: budget.mes,
+      ano: budget.ano,
+      limite: budget.limite,
+    };
+  }
   const now = new Date();
   return {
     idCategoria: 0,
@@ -47,9 +57,11 @@ function getDefaultValues(): Partial<BudgetFormValues> {
   };
 }
 
-export function NewBudgetDialog({ open, onClose }: NewBudgetDialogProps) {
+export function BudgetFormDialog({ open, budget, onClose }: BudgetFormDialogProps) {
   const categories = useCategories();
   const create = useCreateBudget();
+  const update = useUpdateBudget();
+  const isEditing = Boolean(budget);
 
   const {
     register,
@@ -59,20 +71,24 @@ export function NewBudgetDialog({ open, onClose }: NewBudgetDialogProps) {
     formState: { errors, isSubmitting },
   } = useForm<BudgetFormValues>({
     resolver: zodResolver(budgetFormSchema),
-    defaultValues: getDefaultValues(),
+    defaultValues: getFormValues(budget),
   });
 
   useEffect(() => {
-    if (open) reset(getDefaultValues());
-  }, [open, reset]);
+    if (open) reset(getFormValues(budget));
+  }, [open, budget, reset]);
 
   async function onSubmit(values: BudgetFormValues) {
     try {
-      await create.mutateAsync(values);
+      if (budget) {
+        await update.mutateAsync({ id: budget.id, input: values });
+      } else {
+        await create.mutateAsync(values);
+      }
       onClose();
     } catch (e) {
       setError("root", {
-        message: e instanceof ApiError ? e.message : "Não foi possível criar o orçamento.",
+        message: e instanceof ApiError ? e.message : "Não foi possível salvar o orçamento.",
       });
     }
   }
@@ -81,8 +97,12 @@ export function NewBudgetDialog({ open, onClose }: NewBudgetDialogProps) {
     <Dialog
       open={open}
       onClose={onClose}
-      title="Novo Orçamento"
-      description="Defina um limite de gastos por categoria e mês."
+      title={isEditing ? "Editar Orçamento" : "Novo Orçamento"}
+      description={
+        isEditing
+          ? "Altere a categoria, o mês ou o limite deste orçamento."
+          : "Defina um limite de gastos por categoria e mês."
+      }
     >
       <form className="space-y-4" onSubmit={handleSubmit(onSubmit)} noValidate>
         <FormField
@@ -159,7 +179,7 @@ export function NewBudgetDialog({ open, onClose }: NewBudgetDialogProps) {
           </Button>
           <Button type="submit" disabled={isSubmitting}>
             {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-            Salvar Orçamento
+            {isEditing ? "Salvar Alterações" : "Salvar Orçamento"}
           </Button>
         </div>
       </form>

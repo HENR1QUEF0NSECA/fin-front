@@ -2,7 +2,7 @@ import { apiFetch } from "@/lib/api-fetch";
 import { BACKEND_ROUTES } from "@/lib/api-routes";
 import { asNumber, asString, isRecord } from "@/lib/parse";
 
-import type { Budget, CreateBudgetInput } from "./types";
+import type { Budget, BudgetInput } from "./types";
 
 function normalizeBudget(raw: unknown): Budget | null {
   if (!isRecord(raw)) return null;
@@ -34,19 +34,35 @@ export async function listBudgets(): Promise<Budget[]> {
   return data.map(normalizeBudget).filter((b): b is Budget => b !== null);
 }
 
-export async function createBudget(input: CreateBudgetInput): Promise<Budget> {
-  const raw = await apiFetch<unknown>(BACKEND_ROUTES.budgets.create, {
-    method: "POST",
-    body: {
-      categoriaId: input.idCategoria,
-      mes: input.mes,
-      ano: input.ano,
-      limite: input.limite,
-    },
-  });
+function toBackendBody(input: BudgetInput) {
+  return {
+    categoriaId: input.idCategoria,
+    mes: input.mes,
+    ano: input.ano,
+    limite: input.limite,
+  };
+}
+
+function toSavedBudget(raw: unknown): Budget {
   const normalized = normalizeBudget(raw);
   if (!normalized) throw new Error("Resposta do servidor em formato inesperado");
   return normalized;
+}
+
+export async function createBudget(input: BudgetInput): Promise<Budget> {
+  const raw = await apiFetch<unknown>(BACKEND_ROUTES.budgets.create, {
+    method: "POST",
+    body: toBackendBody(input),
+  });
+  return toSavedBudget(raw);
+}
+
+export async function updateBudget(id: number | string, input: BudgetInput): Promise<Budget> {
+  const raw = await apiFetch<unknown>(BACKEND_ROUTES.budgets.update(id), {
+    method: "PUT",
+    body: toBackendBody(input),
+  });
+  return toSavedBudget(raw);
 }
 
 export async function deleteBudget(id: number | string): Promise<void> {

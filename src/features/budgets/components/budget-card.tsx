@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertTriangle, CheckCircle2, Trash2 } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Pencil, Trash2 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,7 @@ type BudgetCardProps = {
   budget: Budget;
   categoryName: string;
   spent: number;
+  onRequestEdit: (budget: Budget) => void;
   onRequestDelete: (budget: Budget) => void;
 };
 
@@ -23,6 +24,7 @@ export function BudgetCard({
   budget,
   categoryName,
   spent,
+  onRequestEdit,
   onRequestDelete,
 }: BudgetCardProps) {
   const { isPrivate } = usePrivacy();
@@ -65,15 +67,26 @@ export function BudgetCard({
               {monthLabel}/{budget.ano} · Orçamento mensal
             </p>
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            aria-label={`Excluir orçamento de ${categoryName}`}
-            onClick={() => onRequestDelete(budget)}
-            className="text-muted-foreground hover:text-danger"
-          >
-            <Trash2 className="h-4 w-4" aria-hidden />
-          </Button>
+          <div className="flex shrink-0 items-center">
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label={`Editar orçamento de ${categoryName}`}
+              onClick={() => onRequestEdit(budget)}
+              className="text-muted-foreground hover:text-foreground"
+            >
+              <Pencil className="h-4 w-4" aria-hidden />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label={`Excluir orçamento de ${categoryName}`}
+              onClick={() => onRequestDelete(budget)}
+              className="text-muted-foreground hover:text-danger"
+            >
+              <Trash2 className="h-4 w-4" aria-hidden />
+            </Button>
+          </div>
         </header>
 
         <div className="space-y-2">

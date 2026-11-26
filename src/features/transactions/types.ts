@@ -18,13 +18,14 @@ export type TransactionFilters = {
   idCategoria?: number | "TODAS";
 };
 
-export type CreateTransactionInput = {
+export type TransactionInput = {
   tipo: TransactionType;
   valor: number;
   idCategoria: number;
   descricao: string;
+  data: string;
 };
 
-export type CreateTransactionResponse = Transaction & {
+export type SavedTransaction = Transaction & {
   alertaOrcamento?: boolean;
 };

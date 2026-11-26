@@ -11,35 +11,53 @@ import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { useCategories } from "@/features/categories/hooks";
-import { useCreateTransaction } from "@/features/transactions/hooks";
+import { useCreateTransaction, useUpdateTransaction } from "@/features/transactions/hooks";
 import {
+  MIN_TRANSACTION_DATE,
   transactionFormSchema,
   type TransactionFormValues,
 } from "@/features/transactions/schemas";
-import type { CreateTransactionResponse } from "@/features/transactions/types";
+import type { SavedTransaction, Transaction } from "@/features/transactions/types";
 import { ApiError } from "@/lib/api-fetch";
+import { toIsoDate } from "@/lib/format";
 
 import { TypeToggle } from "./type-toggle";
 
-type NewTransactionDialogProps = {
+type TransactionFormDialogProps = {
   open: boolean;
+  transaction?: Transaction | null;
   onClose: () => void;
-  onCreated?: (response: CreateTransactionResponse) => void;
+  onSaved?: (response: SavedTransaction) => void;
 };
 
-const defaultValues: Partial<TransactionFormValues> = {
-  tipo: "DESPESA",
-  idCategoria: 0,
-  descricao: "",
-};
+function getFormValues(transaction?: Transaction | null): Partial<TransactionFormValues> {
+  if (!transaction) {
+    return {
+      tipo: "DESPESA",
+      idCategoria: 0,
+      descricao: "",
+      data: toIsoDate(new Date()),
+    };
+  }
+  return {
+    tipo: transaction.tipo === "R" ? "RECEITA" : "DESPESA",
+    valor: transaction.valor,
+    idCategoria: transaction.idCategoria,
+    descricao: transaction.descricao,
+    data: transaction.data ? transaction.data.slice(0, 10) : toIsoDate(new Date()),
+  };
+}
 
-export function NewTransactionDialog({
+export function TransactionFormDialog({
   open,
+  transaction,
   onClose,
-  onCreated,
-}: NewTransactionDialogProps) {
+  onSaved,
+}: TransactionFormDialogProps) {
   const categories = useCategories();
   const create = useCreateTransaction();
+  const update = useUpdateTransaction();
+  const isEditing = Boolean(transaction);
 
   const {
     control,
@@ -50,17 +68,19 @@ export function NewTransactionDialog({
     formState: { errors, isSubmitting },
   } = useForm<TransactionFormValues>({
     resolver: zodResolver(transactionFormSchema),
-    defaultValues,
+    defaultValues: getFormValues(transaction),
   });
 
   useEffect(() => {
-    if (open) reset(defaultValues);
-  }, [open, reset]);
+    if (open) reset(getFormValues(transaction));
+  }, [open, transaction, reset]);
 
   async function onSubmit(values: TransactionFormValues) {
     try {
-      const response = await create.mutateAsync(values);
-      onCreated?.(response);
+      const response = transaction
+        ? await update.mutateAsync({ id: transaction.id, input: values })
+        : await create.mutateAsync(values);
+      onSaved?.(response);
       onClose();
     } catch (error) {
       setError("root", {
@@ -74,8 +94,12 @@ export function NewTransactionDialog({
     <Dialog
       open={open}
       onClose={onClose}
-      title="Nova Transação"
-      description="Registre uma nova receita ou despesa."
+      title={isEditing ? "Editar Transação" : "Nova Transação"}
+      description={
+        isEditing
+          ? "Altere os dados desta receita ou despesa."
+          : "Registre uma nova receita ou despesa."
+      }
     >
       <form className="space-y-4" onSubmit={handleSubmit(onSubmit)} noValidate>
         <Controller
@@ -86,20 +110,34 @@ export function NewTransactionDialog({
           )}
         />
 
-        <FormField label="Valor (R$)" error={errors.valor?.message}>
-          {(p) => (
-            <Input
-              type="number"
-              inputMode="decimal"
-              step="0.01"
-              min="0"
-              placeholder="0,00"
-              onFocus={(e) => e.currentTarget.select()}
-              {...p}
-              {...register("valor", { valueAsNumber: true })}
-            />
-          )}
-        </FormField>
+        <div className="grid grid-cols-2 gap-3">
+          <FormField label="Valor (R$)" error={errors.valor?.message}>
+            {(p) => (
+              <Input
+                type="number"
+                inputMode="decimal"
+                step="0.01"
+                min="0"
+                placeholder="0,00"
+                onFocus={(e) => e.currentTarget.select()}
+                {...p}
+                {...register("valor", { valueAsNumber: true })}
+              />
+            )}
+          </FormField>
+
+          <FormField label="Data" error={errors.data?.message}>
+            {(p) => (
+              <Input
+                type="date"
+                min={MIN_TRANSACTION_DATE}
+                max={toIsoDate(new Date())}
+                {...p}
+                {...register("data")}
+              />
+            )}
+          </FormField>
+        </div>
 
         <FormField
           label="Categoria"
@@ -140,7 +178,7 @@ export function NewTransactionDialog({
           </Button>
           <Button type="submit" disabled={isSubmitting}>
             {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-            Salvar Transação
+            {isEditing ? "Salvar Alterações" : "Salvar Transação"}
           </Button>
         </div>
       </form>

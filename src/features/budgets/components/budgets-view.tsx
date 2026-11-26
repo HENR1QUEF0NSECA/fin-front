@@ -16,14 +16,18 @@ import {
 
 import type { Budget } from "../types";
 import { BudgetCard } from "./budget-card";
+import { BudgetFormDialog } from "./budget-form-dialog";
 import { DeleteBudgetDialog } from "./delete-budget-dialog";
-import { NewBudgetDialog } from "./new-budget-dialog";
 
 export function BudgetsView() {
   const budgets = useBudgets();
   const categories = useCategories();
 
-  const [newOpen, setNewOpen] = useState(false);
+  const [form, setForm] = useState<{ open: boolean; budget: Budget | null }>({
+    open: false,
+    budget: null,
+  });
+  const openNew = () => setForm({ open: true, budget: null });
   const [toDelete, setToDelete] = useState<Budget | null>(null);
 
   const categoryMap = useMemo(
@@ -47,7 +51,7 @@ export function BudgetsView() {
         title="Orçamentos"
         description="Defina limites de gastos por categoria e mês."
         actions={
-          <Button onClick={() => setNewOpen(true)} className="gap-2">
+          <Button onClick={openNew} className="gap-2">
             <Plus className="h-4 w-4" aria-hidden />
             Novo Orçamento
           </Button>
@@ -77,7 +81,7 @@ export function BudgetsView() {
           title="Nenhum orçamento cadastrado"
           description="Crie um orçamento por categoria e mês para acompanhar seus limites de gasto."
           action={
-            <Button onClick={() => setNewOpen(true)} className="gap-2">
+            <Button onClick={openNew} className="gap-2">
               <Plus className="h-4 w-4" aria-hidden />
               Novo Orçamento
             </Button>
@@ -91,13 +95,18 @@ export function BudgetsView() {
               budget={b}
               categoryName={getCategoryName(b, categoryMap)}
               spent={b.gasto}
+              onRequestEdit={(budget) => setForm({ open: true, budget })}
               onRequestDelete={setToDelete}
             />
           ))}
         </div>
       )}
 
-      <NewBudgetDialog open={newOpen} onClose={() => setNewOpen(false)} />
+      <BudgetFormDialog
+        open={form.open}
+        budget={form.budget}
+        onClose={() => setForm((current) => ({ ...current, open: false }))}
+      />
       <DeleteBudgetDialog
         budget={toDelete}
         categoryName={deletingName}

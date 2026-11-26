@@ -8,7 +8,7 @@ export type Budget = {
   gasto: number;
 };
 
-export type CreateBudgetInput = {
+export type BudgetInput = {
   idCategoria: number;
   mes: number;
   ano: number;

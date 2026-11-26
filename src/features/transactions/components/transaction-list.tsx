@@ -1,6 +1,6 @@
 "use client";
 
-import { Filter, Trash2, Wallet } from "lucide-react";
+import { Filter, Pencil, Trash2, Wallet } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -21,6 +21,7 @@ type TransactionListProps = {
   isLoading: boolean;
   error?: Error | null;
   hasActiveFilters?: boolean;
+  onEdit: (transaction: Transaction) => void;
   onDelete: (transaction: Transaction) => void;
   onRetry?: () => void;
   onClearFilters?: () => void;
@@ -32,6 +33,7 @@ export function TransactionList({
   isLoading,
   error,
   hasActiveFilters,
+  onEdit,
   onDelete,
   onRetry,
   onClearFilters,
@@ -124,15 +126,26 @@ export function TransactionList({
             >
               {isReceita ? "+" : "−"} {formatCurrency(t.valor, isPrivate)}
             </p>
-            <Button
-              variant="ghost"
-              size="icon"
-              aria-label={`Excluir ${t.descricao}`}
-              onClick={() => onDelete(t)}
-              className="text-muted-foreground hover:text-danger"
-            >
-              <Trash2 className="h-4 w-4" aria-hidden />
-            </Button>
+            <div className="flex shrink-0 items-center">
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label={`Editar ${t.descricao}`}
+                onClick={() => onEdit(t)}
+                className="text-muted-foreground hover:text-foreground"
+              >
+                <Pencil className="h-4 w-4" aria-hidden />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label={`Excluir ${t.descricao}`}
+                onClick={() => onDelete(t)}
+                className="text-muted-foreground hover:text-danger"
+              >
+                <Trash2 className="h-4 w-4" aria-hidden />
+              </Button>
+            </div>
           </div>
         );
       })}

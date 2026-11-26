@@ -8,8 +8,9 @@ import {
   createTransaction,
   deleteTransaction,
   listTransactions,
+  updateTransaction,
 } from "./services";
-import type { CreateTransactionInput } from "./types";
+import type { TransactionInput } from "./types";
 
 export const transactionsKey = ["transactions"] as const;
 
@@ -29,7 +30,16 @@ function invalidateAfterTransactionChange(qc: QueryClient) {
 export function useCreateTransaction() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (input: CreateTransactionInput) => createTransaction(input),
+    mutationFn: (input: TransactionInput) => createTransaction(input),
+    onSuccess: () => invalidateAfterTransactionChange(qc),
+  });
+}
+
+export function useUpdateTransaction() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, input }: { id: number | string; input: TransactionInput }) =>
+      updateTransaction(id, input),
     onSuccess: () => invalidateAfterTransactionChange(qc),
   });
 }

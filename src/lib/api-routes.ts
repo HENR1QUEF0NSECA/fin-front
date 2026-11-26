@@ -12,6 +12,7 @@ export const BACKEND_ROUTES = {
   transactions: {
     list: "/transacoes",
     create: "/transacoes",
+    update: (id: string | number) => `/transacoes/${id}`,
     delete: (id: string | number) => `/transacoes/${id}`,
   },
   dashboard: {
@@ -21,6 +22,7 @@ export const BACKEND_ROUTES = {
   budgets: {
     list: "/orcamentos",
     create: "/orcamentos",
+    update: (id: string | number) => `/orcamentos/${id}`,
     delete: (id: string | number) => `/orcamentos/${id}`,
   },
 } as const;

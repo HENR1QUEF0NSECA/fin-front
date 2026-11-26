@@ -4,14 +4,24 @@ import { asNumber, asString, isRecord } from "@/lib/parse";
 
 import type {
   BackendTransactionType,
-  CreateTransactionInput,
-  CreateTransactionResponse,
+  SavedTransaction,
   Transaction,
+  TransactionInput,
   TransactionType,
 } from "./types";
 
 function toBackendType(tipo: TransactionType): BackendTransactionType {
   return tipo === "RECEITA" ? "R" : "D";
+}
+
+function toBackendBody(input: TransactionInput) {
+  return {
+    tipo: toBackendType(input.tipo),
+    valor: input.valor,
+    categoriaId: input.idCategoria,
+    descricao: input.descricao,
+    data: input.data,
+  };
 }
 
 function normalizeTransaction(raw: unknown): Transaction | null {
@@ -35,6 +45,15 @@ function normalizeTransaction(raw: unknown): Transaction | null {
   };
 }
 
+function toSavedTransaction(raw: unknown): SavedTransaction {
+  const normalized = normalizeTransaction(raw);
+  if (!normalized) {
+    throw new Error("Resposta do servidor em formato inesperado");
+  }
+  const alerta = isRecord(raw) && raw.alertaOrcamento === true;
+  return { ...normalized, alertaOrcamento: alerta };
+}
+
 export async function listTransactions(): Promise<Transaction[]> {
   const data = await apiFetch<unknown>(BACKEND_ROUTES.transactions.list);
   if (!Array.isArray(data)) return [];
@@ -43,24 +62,23 @@ export async function listTransactions(): Promise<Transaction[]> {
     .filter((t): t is Transaction => t !== null);
 }
 
-export async function createTransaction(
-  input: CreateTransactionInput,
-): Promise<CreateTransactionResponse> {
+export async function createTransaction(input: TransactionInput): Promise<SavedTransaction> {
   const raw = await apiFetch<unknown>(BACKEND_ROUTES.transactions.create, {
     method: "POST",
-    body: {
-      tipo: toBackendType(input.tipo),
-      valor: input.valor,
-      categoriaId: input.idCategoria,
-      descricao: input.descricao,
-    },
+    body: toBackendBody(input),
   });
-  const normalized = normalizeTransaction(raw);
-  if (!normalized) {
-    throw new Error("Resposta do servidor em formato inesperado");
-  }
-  const alerta = isRecord(raw) && raw.alertaOrcamento === true;
-  return { ...normalized, alertaOrcamento: alerta };
+  return toSavedTransaction(raw);
+}
+
+export async function updateTransaction(
+  id: number | string,
+  input: TransactionInput,
+): Promise<SavedTransaction> {
+  const raw = await apiFetch<unknown>(BACKEND_ROUTES.transactions.update(id), {
+    method: "PUT",
+    body: toBackendBody(input),
+  });
+  return toSavedTransaction(raw);
 }
 
 export async function deleteTransaction(id: number | string): Promise<void> {

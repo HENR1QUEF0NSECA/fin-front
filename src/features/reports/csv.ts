@@ -1,4 +1,4 @@
-import { formatDate } from "@/lib/format";
+import { formatDate, toIsoDate } from "@/lib/format";
 
 export type TransactionCsvRow = {
   data?: string;
@@ -31,7 +31,7 @@ export function downloadTransactionsCsv(rows: TransactionCsvRow[]): void {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `finplan-transacoes-${new Date().toISOString().slice(0, 10)}.csv`;
+  a.download = `finplan-transacoes-${toIsoDate(new Date())}.csv`;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
